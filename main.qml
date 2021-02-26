@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
-import QtQuick.Controls.Styles 1.4
 
 Window {
     id: root
@@ -45,13 +44,18 @@ Window {
         Rectangle{
             anchors.margins: 10
             anchors.fill: leftSideRectangle
+
             layer.enabled: true
+            clip: true
+
             color:"transparent"
 
             ScrollView{
                 id: leftsideColumnScrollView
                 anchors.fill: parent
                 anchors.margins: 10
+
+                layer.enabled: true
                 clip: true
 
                 ColumnLayout {
@@ -61,6 +65,9 @@ Window {
                     Text {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
+
+                        layer.enabled: true
+                        clip: true
 
                         text: "Enter your search request here"
 
@@ -75,6 +82,9 @@ Window {
                         color:"transparent"
                         border.width: 1
                         border.color: "#AAAAAA"
+
+                        layer.enabled: true
+                        clip: true
 
                         TextInput {
                             anchors.fill: parent
@@ -91,6 +101,9 @@ Window {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
 
+                        layer.enabled: true
+                        clip: true
+
                         text: "Enter starting url here"
 
                         font.pixelSize: 16
@@ -100,6 +113,9 @@ Window {
                     Rectangle{
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
+
+                        layer.enabled: true
+                        clip: true
 
                         color:"transparent"
                         border.width: 1
@@ -121,6 +137,9 @@ Window {
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
+
+                        layer.enabled: true
+                        clip: true
 
                         spacing: 5
                         Button {
@@ -157,6 +176,9 @@ Window {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
 
+                        layer.enabled: true
+                        clip: true
+
                         value: 0.8
                         //visible: false
                     }
@@ -167,6 +189,9 @@ Window {
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
+
+                        layer.enabled: true
+                        clip: true
 
                         background: Rectangle {
                             implicitWidth: 200
@@ -187,10 +212,13 @@ Window {
 
                     Button {
                         id: showHideAdvanced
-                        property var advancedSectionVisible: true
+                        property var advancedSectionVisible: false
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: 72
+
+                        layer.enabled: true
+                        clip: true
 
                         background: Rectangle{
                             anchors.top: parent.top
@@ -232,6 +260,9 @@ Window {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
 
+                        layer.enabled: true
+                        clip: true
+
                         id: maximumThreadsCount
                         text: "Maximum threads count"
                         font.pixelSize: 16
@@ -244,6 +275,9 @@ Window {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 18
 
+                        layer.enabled: true
+                        clip: true
+
                         text: "Recommended for your system is 4"
 
                         font.pixelSize: 12
@@ -254,6 +288,9 @@ Window {
                         visible: showHideAdvanced.advancedSectionVisible
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
+
+                        layer.enabled: true
+                        clip: true
 
                         Slider {
                             id: threadsCountSlider
@@ -290,6 +327,9 @@ Window {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
 
+                        layer.enabled: true
+                        clip: true
+
                         text: "Maximum scan Urls count"
 
                         font.pixelSize: 16
@@ -302,6 +342,9 @@ Window {
                         Layout.fillWidth: true
                         Layout.maximumWidth: parent.width
                         Layout.preferredHeight: 72
+
+                        layer.enabled: true
+                        clip: true
 
                         text: "Bigger number is, more results can be found and longer search will be running. Be aware that using huge number requires a lot of time for search to be finished"
 
@@ -316,6 +359,9 @@ Window {
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: 24
+
+                        layer.enabled: true
+                        clip: true
 
                         Slider {
                             id: scanUrlsCountSlider
@@ -356,6 +402,9 @@ Window {
 
                         property bool showLog: false
 
+                        layer.enabled: true
+                        clip: true
+
                         text: "Show log"
                         font.pixelSize: 16
                         font.bold: true
@@ -378,12 +427,11 @@ Window {
         Rectangle{
             anchors.margins: 10
             anchors.fill: rightSideRectangle
-            layer.enabled: true
             color:"transparent"
 
             ColumnLayout{
                 id:rightsideColumn
-                anchors.fill: rightSideRectangle
+                anchors.fill: parent
 
                 layer.enabled: true
 
@@ -391,14 +439,14 @@ Window {
                     id: resultsScrollView
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 400
 
                     layer.enabled: true
+                    clip: true
 
                     ColumnLayout{
                         spacing: 10
-                        width: parent.width
-                        height: parent.height
+                        anchors.fill: parent
+
                         Button{
                             id: button1
                             text: "button1"
@@ -458,25 +506,35 @@ Window {
                     }
                 }
 
-                ScrollView{
-                    id: logsScrollView
+
+                Rectangle{
                     visible: showLogButton.showLog
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    Layout.maximumHeight: 200
-                    Layout.minimumHeight: 50
+                    Layout.preferredHeight: 200
 
                     layer.enabled: true
+                    clip: true
 
-                    Rectangle {
-                        color: "white"
+                    color: "white"
+                    border.width: 2
+                    border.color: "#AAAAAA"
+
+                    ScrollView{
+                        id: logsScrollView
+
                         anchors.fill: parent
+                        anchors.margins: 5
+
+                        layer.enabled: true
+                        clip: true
 
                         TextEdit{
                             anchors.fill: parent
+                            selectByMouse: true
 
-                            text: "klasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \n"
+                            text: "klasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \n"
                         }
                     }
                 }
