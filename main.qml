@@ -1,21 +1,23 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+import QtQuick.Controls 2.5
 import QtQuick.Controls.Styles 1.4
 
 Window {
     id: root
     width: 800
-    height: 600
+    height: 700
+    minimumWidth: 640
+    minimumHeight: 480
     visible: true
     title: qsTr("Web Search Tool")
 
     Rectangle {
         id: backgroundImage
         anchors.fill: parent
-        color: "#5BDDE1"
-        Image { source: "images/gradient_background.png"; fillMode: Image.Stretch; anchors.fill: parent; opacity: 1.0}
+        color: "#FFFFFF"
+        Image { source: "images/gradient_background.png"; fillMode: Image.Stretch; anchors.fill: parent; opacity: 0.7}
 
         Rectangle {
             id: leftSideRectangle
@@ -40,110 +42,124 @@ Window {
         }
 
 
-        ScrollView{
-            id: scrollView
-            anchors.top: leftSideRectangle.top
-            anchors.left: leftSideRectangle.left
-            anchors.right: leftSideRectangle.right
-            anchors.bottom: leftSideRectangle.bottom
+        Rectangle{
+            border.color: "#555555"
+            border.width: 2
             anchors.margins: 10
-            ColumnLayout {
+            anchors.fill: leftSideRectangle
+            layer.enabled: true
+
+            ScrollView{
+                id: leftsideColumnScrollView
                 anchors.fill: parent
-                spacing: 10
+                clip: true
 
-                Text {
-                    id: enterTextLabel
-                    text: "Enter your search request here"
-                    height: 24
-                    font.pixelSize: 16
-                    font.bold: true
-                }
+                ColumnLayout {
+                    anchors.margins: 10
+                    anchors.fill: parent
 
-                TextInput {
-                    id: searchRequestInput
-                    text: "Search request"
-                    Layout.fillWidth: true
-                    font.pixelSize: 16
-                }
-
-                Text {
-                    id: enterUrlLabel
-                    text: "Enter starting url here"
-                    height: 24
-                    font.pixelSize: 16
-                    font.bold: true
-                }
-
-                TextInput {
-                    id: startUrlInput
-                    text: "Starting url"
-                    Layout.fillWidth: true
-                    font.pixelSize: 16
-                }
-
-                RowLayout {
-                    id: mainControlButtons
-                    Layout.fillWidth: true
                     spacing: 10
-                    Button {
-                        id: startSearchButton
-                        text: "Start"
-                        Layout.preferredWidth: 85
+
+                    Text {
+                        id: enterTextLabel
+                        text: "Enter your search request here"
+                        height: 24
+                        font.pixelSize: 16
+                        font.bold: true
+                    }
+
+                    Rectangle{
+                        Layout.fillWidth: true
                         Layout.preferredHeight: 24
-                        style: ButtonStyle{
-                            label: Text{
-                                font.pixelSize: 16
-                                font.bold: true
-                            }
+
+                        color:"transparent"
+                        border.width: 1
+                        border.color: "#AAAAAA"
+
+                        TextInput {
+                            anchors.fill: parent
+                            id: searchRequestInput
+                            text: "Search request"
+                            layer.enabled: true
+                            selectByMouse: true
+                            font.pixelSize: 16
                         }
                     }
-                    Button {
-                        id: pauseSearchButton
-                        text: "Pause"
-                        Layout.preferredWidth: 90
+
+                    Text {
+                        id: enterUrlLabel
+                        text: "Enter starting url here"
+                        height: 24
+                        font.pixelSize: 16
+                        font.bold: true
+                    }
+
+                    Rectangle{
+                        Layout.fillWidth: true
                         Layout.preferredHeight: 24
-                        style: ButtonStyle{
-                            label: Text{
-                                font.pixelSize: 16
-                                font.bold: true
-                            }
+
+                        color:"transparent"
+                        border.width: 1
+                        border.color: "#AAAAAA"
+
+                        TextInput {
+                            id: startUrlInput
+                            text: "Starting url"
+                            Layout.fillWidth: true
+                            font.pixelSize: 16
                         }
                     }
-                    Button {
-                        id: stopSearchButton
-                        text: "Stop"
-                        Layout.preferredWidth: 85
-                        Layout.preferredHeight: 24
-                        style: ButtonStyle{
-                            label: Text{
-                                font.pixelSize: 16
-                                font.bold: true
-                            }
+
+                    RowLayout {
+                        id: mainControlButtons
+                        Layout.fillWidth: true
+                        spacing: 5
+                        Button {
+                            id: startSearchButton
+                            Layout.preferredWidth: 80
+                            Layout.preferredHeight: 24
+                            text: "Start"
+                            font.pixelSize: 16
+                            font.bold: true
+                        }
+                        Button {
+                            id: pauseSearchButton
+                            Layout.preferredWidth: 85
+                            Layout.preferredHeight: 24
+                            text: "Pause"
+                            font.pixelSize: 16
+                            font.bold: true
+                        }
+                        Button {
+                            id: stopSearchButton
+                            Layout.preferredWidth: 80
+                            Layout.preferredHeight: 24
+                            text: "Stop"
+                            font.pixelSize: 16
+                            font.bold: true
                         }
                     }
-                }
 
-                Slider{
-                    id: testSlider
-                    value: 0.8
-                    Layout.preferredHeight: 24
-                    Layout.fillWidth: true
-                    visible: false
-                }
+                    Slider{
+                        id: testSlider
+                        value: 0.8
+                        Layout.preferredHeight: 24
+                        Layout.fillWidth: true
+                        //visible: false
+                    }
 
-                ProgressBar {
-                    id: progressBar
-                    value: testSlider.value
-                    Layout.preferredHeight: 24
-                    Layout.fillWidth: true
+                    ProgressBar {
+                        id: progressBar
+                        value: testSlider.value
+                        Layout.preferredHeight: 24
+                        Layout.fillWidth: true
 
-                    ProgressBarStyle{
                         background: Rectangle {
                             implicitWidth: 200
                             color: "#e6e6e6"
                         }
 
-                        progress: Item {
+                        contentItem: Item{
                             implicitWidth: 200
 
                             Rectangle {
@@ -151,75 +167,274 @@ Window {
                                 height: parent.height
                                 color: "#e6e6e6"
                                 Image { source: "images/progress_bar.png"; fillMode: Image.PreserveAspectCrop; horizontalAlignment: Image.AlignLeft ; anchors.fill: parent; opacity: 1.0}
+                            }
+                        }
+                    }
 
+                    Button {
+                        id: showHideAdvanced
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width
+                        Layout.preferredHeight: 72
+                        property var advancedSectionVisible: true
+
+                        background: Rectangle{
+                            anchors.top: parent.top
+                            color: "transparent"
+                            Rectangle{
+                                color: "transparent"
+                                width: 26
+                                height: 26
+
+                                Image {
+                                    source: "images/triangle.png";
+                                    fillMode: Image.Pad;
+                                    horizontalAlignment: Image.AlignHCenter;
+                                    verticalAlignment: Image.AlignVCenter;
+                                    anchors.fill: parent;
+                                    sourceSize.width: 16
+                                    rotation: showHideAdvanced.advancedSectionVisible ? 90: 0;
+                                    opacity: 1.0
+                                }
+                            }
+
+                            Text {
+                                id: advancedSection
+                                width: parent.width - 16
+                                leftPadding: 26
+                                text: "Advanced section (Change this values only when you know what you do)"
+                                font.pixelSize: 16
+                                font.bold: true
+                                wrapMode: Text.WrapAnywhere
+                            }
+                        }
+
+
+                        onClicked: showHideAdvanced.advancedSectionVisible = !showHideAdvanced.advancedSectionVisible
+                    }
+
+                    ColumnLayout {
+                        visible: showHideAdvanced.advancedSectionVisible
+                        Layout.fillHeight: true
+
+                        spacing: 10
+
+                        Text {
+                            id: maximumThreadsCount
+                            text: "Maximum threads count"
+                            Layout.fillWidth: true
+                            font.pixelSize: 16
+                            Layout.preferredHeight: 24
+                        }
+
+                        Text {
+                            id: recommendedThreadsCount
+                            text: "Recommended for your system is 4"
+                            Layout.fillWidth: true
+                            font.pixelSize: 12
+                            font.italic: true
+                            Layout.preferredHeight: 24
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 24
+                            Slider {
+                                id: threadsCountSlider
+                                from: 1
+                                to: 2048
+                                value: 4
+                                stepSize: 1
+                            }
+
+                            TextInput {
+                                id: threadsCountTextInput
+                                text: threadsCountSlider.value
+                                selectByMouse: true
+                                Layout.preferredWidth: 50
+
+                                validator: IntValidator{
+                                    bottom:1
+                                    top:2048
+                                }
+
+                                onTextChanged: threadsCountSlider.value = Number(text)
+                            }
+                        }
+
+                        Text {
+                            id: maximumScanUrlsCount
+                            text: "Maximum scan Urls count"
+                            Layout.fillWidth: true
+                            font.pixelSize: 16
+                            Layout.preferredHeight: 24
+                        }
+
+                        Text {
+                            id: recommendationAndAttension
+                            text: "Bigger number is, more results can be found and longer search will be running. Be aware that using huge number requires a lot of time for search to be finished"
+                            Layout.fillWidth: true
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            Layout.preferredWidth: parent.width
+                            font.pixelSize: 12
+                            font.italic: true
+                            Layout.preferredHeight: 72
+                        }
+
+                        RowLayout {
+                            Layout.preferredHeight: 24
+                            Layout.fillWidth: true
+
+                            Slider {
+                                id: scanUrlsCountSlider
+                                from: 1
+                                to:4096
+                                value: 4
+                                stepSize: 1
+                            }
+
+                            TextInput {
+                                id: scanUrlsCountTextInput
+                                text: scanUrlsCountSlider.value
+                                selectByMouse: true
+                                Layout.preferredWidth: 50
+
+                                validator: IntValidator{
+                                    bottom:1
+                                    top:4096
+                                }
+
+                                onTextChanged: scanUrlsCountSlider.value = Number(text)
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 24
+
+                            Button {
+                                id: showLogButton
+                                property bool showLog: false
+
+                                anchors.fill: parent
+
+                                text: "Show log"
+                                font.pixelSize: 16
+                                font.bold: true
+
+                                onClicked:
+                                    if(text=="Show log") {
+                                        showLog = true
+                                        text = "Hide log"
+                                    }
+                                    else {
+                                        showLog = false
+                                        text="Show log"
+                                    }
                             }
                         }
                     }
                 }
+            }
+        }
 
-                Text {
-                    id: advancedSection
-                    text: "Advanced section (Change this values only when you know what you do)"
-                    Layout.fillWidth: true
-                    font.pixelSize: 16
-                    font.bold: true
-                    wrapMode: Text.WordWrap
-                    Layout.preferredWidth: parent.width
-                    Layout.preferredHeight: 72
-                }
+        ColumnLayout{
+            id:rightsideColumn
+            anchors.fill: rightSideRectangle
 
-                Text {
-                    id: maximumThreadsCount
-                    text: "Maximum threads count"
-                    Layout.fillWidth: true
-                    font.pixelSize: 16
-                    Layout.preferredHeight: 24
-                }
+            layer.enabled: true
 
-                Text {
-                    id: recommendedThreadsCount
-                    text: "Recommended for your system is 4"
-                    Layout.fillWidth: true
-                    font.pixelSize: 12
-                    font.italic: true
-                    Layout.preferredHeight: 24
-                }
+            ScrollView{
+                id: resultsScrollView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.preferredWidth: 400
 
-                RowLayout {
-                    Slider {
-                        id: threadsCountSlider
-                        minimumValue: 1
-                        value: 4
-                        stepSize: 1
-                        Layout.preferredHeight: 24
-                        Layout.preferredWidth: 200
-                        visible: false
+                layer.enabled: true
+
+                ColumnLayout{
+                    spacing: 10
+                    width: parent.width
+                    height: parent.height
+                    Button{
+                        id: button1
+                        text: "button1"
                     }
-
-                    TextInput {
-                        id: threadsCountTextInput
-                        text: threadsCountSlider.value
-
-                        inputMask: "9"
-                        onAccepted: threadsCountSlider.value = Number(text)
+                    Button{
+                        id: button2
+                        text: "button2"
+                    }
+                    Button{
+                        id: button3
+                        text: "button4"
+                    }
+                    Button{
+                        id: button4
+                        text: "button4"
+                    }
+                    Button{
+                        id: button5
+                        text: "button5"
+                    }
+                    Button{
+                        id: button6
+                        text: "button6"
+                    }
+                    Button{
+                        id: button7
+                        text: "button7"
+                    }
+                    Button{
+                        id: button8
+                        text: "button8"
+                    }
+                    Button{
+                        id: button9
+                        text: "button9"
+                    }
+                    Button{
+                        id: button10
+                        text: "button10"
+                    }
+                    Button{
+                        id: button11
+                        text: "button11"
+                    }
+                    Button{
+                        id: button12
+                        text: "button12"
+                    }
+                    Button{
+                        id: button13
+                        text: "button13"
+                    }
+                    Button{
+                        id: button14
+                        text: "button14"
                     }
                 }
+            }
 
-                Button {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 24
-                    text: "Show log"
-                    style: ButtonStyle{
-                        label: Text{
-                            color: black
-                            font.pixelSize: 16
-                            font.bold: true
-                        }
+            ScrollView{
+                id: logsScrollView
+                visible: showLogButton.showLog
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.maximumHeight: 200
+                Layout.minimumHeight: 50
+
+                layer.enabled: true
+
+                Rectangle {
+                    color: "white"
+                    anchors.fill: parent
+
+                    TextEdit{
+                        anchors.fill: parent
+
+                        text: "klasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \n"
                     }
-                    onClicked: if(text=="Show log")
-                                    text="Hide log"
-                                else
-                                    text="Show log"
                 }
             }
         }
