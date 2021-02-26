@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.4
 Window {
     id: root
     width: 800
-    height: 700
+    height: 600
     minimumWidth: 640
     minimumHeight: 480
     visible: true
@@ -43,27 +43,27 @@ Window {
 
 
         Rectangle{
-            border.color: "#555555"
-            border.width: 2
             anchors.margins: 10
             anchors.fill: leftSideRectangle
             layer.enabled: true
+            color:"transparent"
 
             ScrollView{
                 id: leftsideColumnScrollView
                 anchors.fill: parent
+                anchors.margins: 10
                 clip: true
 
                 ColumnLayout {
-                    anchors.margins: 10
                     anchors.fill: parent
-
                     spacing: 10
 
                     Text {
-                        id: enterTextLabel
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
                         text: "Enter your search request here"
-                        height: 24
+
                         font.pixelSize: 16
                         font.bold: true
                     }
@@ -80,6 +80,7 @@ Window {
                             anchors.fill: parent
                             id: searchRequestInput
                             text: "Search request"
+
                             layer.enabled: true
                             selectByMouse: true
                             font.pixelSize: 16
@@ -87,9 +88,11 @@ Window {
                     }
 
                     Text {
-                        id: enterUrlLabel
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
                         text: "Enter starting url here"
-                        height: 24
+
                         font.pixelSize: 16
                         font.bold: true
                     }
@@ -105,14 +108,20 @@ Window {
                         TextInput {
                             id: startUrlInput
                             text: "Starting url"
-                            Layout.fillWidth: true
+                            anchors.fill: parent
+
+                            selectByMouse: true
+                            layer.enabled: true
                             font.pixelSize: 16
                         }
                     }
 
                     RowLayout {
                         id: mainControlButtons
+
                         Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
                         spacing: 5
                         Button {
                             id: startSearchButton
@@ -122,6 +131,7 @@ Window {
                             font.pixelSize: 16
                             font.bold: true
                         }
+
                         Button {
                             id: pauseSearchButton
                             Layout.preferredWidth: 85
@@ -130,6 +140,7 @@ Window {
                             font.pixelSize: 16
                             font.bold: true
                         }
+
                         Button {
                             id: stopSearchButton
                             Layout.preferredWidth: 80
@@ -142,17 +153,20 @@ Window {
 
                     Slider{
                         id: testSlider
-                        value: 0.8
-                        Layout.preferredHeight: 24
+
                         Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
+                        value: 0.8
                         //visible: false
                     }
 
                     ProgressBar {
                         id: progressBar
                         value: testSlider.value
-                        Layout.preferredHeight: 24
+
                         Layout.fillWidth: true
+                        Layout.preferredHeight: 24
 
                         background: Rectangle {
                             implicitWidth: 200
@@ -173,10 +187,10 @@ Window {
 
                     Button {
                         id: showHideAdvanced
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: parent.width
-                        Layout.preferredHeight: 72
                         property var advancedSectionVisible: true
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 72
 
                         background: Rectangle{
                             anchors.top: parent.top
@@ -200,137 +214,160 @@ Window {
 
                             Text {
                                 id: advancedSection
-                                width: parent.width - 16
+                                width: parent.width
                                 leftPadding: 26
                                 text: "Advanced section (Change this values only when you know what you do)"
                                 font.pixelSize: 16
                                 font.bold: true
-                                wrapMode: Text.WrapAnywhere
+                                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             }
                         }
-
 
                         onClicked: showHideAdvanced.advancedSectionVisible = !showHideAdvanced.advancedSectionVisible
                     }
 
-                    ColumnLayout {
+                    Text {
                         visible: showHideAdvanced.advancedSectionVisible
-                        Layout.fillHeight: true
 
-                        spacing: 10
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
 
-                        Text {
-                            id: maximumThreadsCount
-                            text: "Maximum threads count"
-                            Layout.fillWidth: true
-                            font.pixelSize: 16
-                            Layout.preferredHeight: 24
+                        id: maximumThreadsCount
+                        text: "Maximum threads count"
+                        font.pixelSize: 16
+                    }
+
+                    Text {
+                        id: recommendedThreadsCount
+                        visible: showHideAdvanced.advancedSectionVisible
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 18
+
+                        text: "Recommended for your system is 4"
+
+                        font.pixelSize: 12
+                        font.italic: true
+                    }
+
+                    RowLayout {
+                        visible: showHideAdvanced.advancedSectionVisible
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
+                        Slider {
+                            id: threadsCountSlider
+                            Layout.fillHeight: true
+                            from: 1
+                            to: 2048
+                            value: 4
+                            stepSize: 1
                         }
 
-                        Text {
-                            id: recommendedThreadsCount
-                            text: "Recommended for your system is 4"
-                            Layout.fillWidth: true
-                            font.pixelSize: 12
-                            font.italic: true
-                            Layout.preferredHeight: 24
-                        }
+                        TextInput {
+                            id: threadsCountTextInput
+                            text: threadsCountSlider.value
+                            selectByMouse: true
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 24
-                            Slider {
-                                id: threadsCountSlider
-                                from: 1
-                                to: 2048
-                                value: 4
-                                stepSize: 1
+                            Layout.preferredWidth: 40
+                            Layout.fillHeight: true
+
+                            horizontalAlignment: TextInput.AlignLeft
+
+                            validator: IntValidator{
+                                bottom:1
+                                top:2048
                             }
 
-                            TextInput {
-                                id: threadsCountTextInput
-                                text: threadsCountSlider.value
-                                selectByMouse: true
-                                Layout.preferredWidth: 50
+                            onTextChanged: threadsCountSlider.value = Number(text)
+                        }
+                    }
 
-                                validator: IntValidator{
-                                    bottom:1
-                                    top:2048
-                                }
+                    Text {
+                        id: maximumScanUrlsCount
+                        visible: showHideAdvanced.advancedSectionVisible
 
-                                onTextChanged: threadsCountSlider.value = Number(text)
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
+                        text: "Maximum scan Urls count"
+
+                        font.pixelSize: 16
+                    }
+
+                    Text {
+                        id: recommendationAndAttension
+                        visible: showHideAdvanced.advancedSectionVisible
+
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: parent.width
+                        Layout.preferredHeight: 72
+
+                        text: "Bigger number is, more results can be found and longer search will be running. Be aware that using huge number requires a lot of time for search to be finished"
+
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        font.pixelSize: 12
+                        font.italic: true
+                    }
+
+
+                    RowLayout {
+                        visible: showHideAdvanced.advancedSectionVisible
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
+
+                        Slider {
+                            id: scanUrlsCountSlider
+
+                            Layout.fillHeight: true
+
+                            from: 1
+                            to:4096
+                            value: 4
+                            stepSize: 1
+                        }
+
+                        TextInput {
+                            id: scanUrlsCountTextInput
+                            text: scanUrlsCountSlider.value
+                            selectByMouse: true
+
+                            Layout.preferredWidth: 40
+                            Layout.fillHeight: true
+
+                            horizontalAlignment: TextInput.AlignLeft
+
+                            validator: IntValidator{
+                                bottom:1
+                                top:4096
                             }
+
+                            onTextChanged: scanUrlsCountSlider.value = Number(text)
                         }
+                    }
 
-                        Text {
-                            id: maximumScanUrlsCount
-                            text: "Maximum scan Urls count"
-                            Layout.fillWidth: true
-                            font.pixelSize: 16
-                            Layout.preferredHeight: 24
-                        }
+                    Button {
+                        id: showLogButton
+                        visible: showHideAdvanced.advancedSectionVisible
 
-                        Text {
-                            id: recommendationAndAttension
-                            text: "Bigger number is, more results can be found and longer search will be running. Be aware that using huge number requires a lot of time for search to be finished"
-                            Layout.fillWidth: true
-                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            Layout.preferredWidth: parent.width
-                            font.pixelSize: 12
-                            font.italic: true
-                            Layout.preferredHeight: 72
-                        }
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 24
 
-                        RowLayout {
-                            Layout.preferredHeight: 24
-                            Layout.fillWidth: true
+                        property bool showLog: false
 
-                            Slider {
-                                id: scanUrlsCountSlider
-                                from: 1
-                                to:4096
-                                value: 4
-                                stepSize: 1
+                        text: "Show log"
+                        font.pixelSize: 16
+                        font.bold: true
+
+                        onClicked:{
+                            if(text=="Show log") {
+                                showLog = true
+                                text = "Hide log"
                             }
-
-                            TextInput {
-                                id: scanUrlsCountTextInput
-                                text: scanUrlsCountSlider.value
-                                selectByMouse: true
-                                Layout.preferredWidth: 50
-
-                                validator: IntValidator{
-                                    bottom:1
-                                    top:4096
-                                }
-
-                                onTextChanged: scanUrlsCountSlider.value = Number(text)
-                            }
-                        }
-
-                        Rectangle{
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 24
-
-                            Button {
-                                id: showLogButton
-                                property bool showLog: false
-
-                                anchors.fill: parent
-
-                                text: "Show log"
-                                font.pixelSize: 16
-                                font.bold: true
-
-                                onClicked:
-                                    if(text=="Show log") {
-                                        showLog = true
-                                        text = "Hide log"
-                                    }
-                                    else {
-                                        showLog = false
-                                        text="Show log"
-                                    }
+                            else {
+                                showLog = false
+                                text="Show log"
                             }
                         }
                     }
@@ -338,102 +375,109 @@ Window {
             }
         }
 
-        ColumnLayout{
-            id:rightsideColumn
+        Rectangle{
+            anchors.margins: 10
             anchors.fill: rightSideRectangle
-
             layer.enabled: true
+            color:"transparent"
 
-            ScrollView{
-                id: resultsScrollView
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.preferredWidth: 400
+            ColumnLayout{
+                id:rightsideColumn
+                anchors.fill: rightSideRectangle
 
                 layer.enabled: true
 
-                ColumnLayout{
-                    spacing: 10
-                    width: parent.width
-                    height: parent.height
-                    Button{
-                        id: button1
-                        text: "button1"
-                    }
-                    Button{
-                        id: button2
-                        text: "button2"
-                    }
-                    Button{
-                        id: button3
-                        text: "button4"
-                    }
-                    Button{
-                        id: button4
-                        text: "button4"
-                    }
-                    Button{
-                        id: button5
-                        text: "button5"
-                    }
-                    Button{
-                        id: button6
-                        text: "button6"
-                    }
-                    Button{
-                        id: button7
-                        text: "button7"
-                    }
-                    Button{
-                        id: button8
-                        text: "button8"
-                    }
-                    Button{
-                        id: button9
-                        text: "button9"
-                    }
-                    Button{
-                        id: button10
-                        text: "button10"
-                    }
-                    Button{
-                        id: button11
-                        text: "button11"
-                    }
-                    Button{
-                        id: button12
-                        text: "button12"
-                    }
-                    Button{
-                        id: button13
-                        text: "button13"
-                    }
-                    Button{
-                        id: button14
-                        text: "button14"
+                ScrollView{
+                    id: resultsScrollView
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.preferredWidth: 400
+
+                    layer.enabled: true
+
+                    ColumnLayout{
+                        spacing: 10
+                        width: parent.width
+                        height: parent.height
+                        Button{
+                            id: button1
+                            text: "button1"
+                        }
+                        Button{
+                            id: button2
+                            text: "button2"
+                        }
+                        Button{
+                            id: button3
+                            text: "button4"
+                        }
+                        Button{
+                            id: button4
+                            text: "button4"
+                        }
+                        Button{
+                            id: button5
+                            text: "button5"
+                        }
+                        Button{
+                            id: button6
+                            text: "button6"
+                        }
+                        Button{
+                            id: button7
+                            text: "button7"
+                        }
+                        Button{
+                            id: button8
+                            text: "button8"
+                        }
+                        Button{
+                            id: button9
+                            text: "button9"
+                        }
+                        Button{
+                            id: button10
+                            text: "button10"
+                        }
+                        Button{
+                            id: button11
+                            text: "button11"
+                        }
+                        Button{
+                            id: button12
+                            text: "button12"
+                        }
+                        Button{
+                            id: button13
+                            text: "button13"
+                        }
+                        Button{
+                            id: button14
+                            text: "button14"
+                        }
                     }
                 }
-            }
 
-            ScrollView{
-                id: logsScrollView
-                visible: showLogButton.showLog
+                ScrollView{
+                    id: logsScrollView
+                    visible: showLogButton.showLog
 
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.maximumHeight: 200
-                Layout.minimumHeight: 50
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    Layout.maximumHeight: 200
+                    Layout.minimumHeight: 50
 
-                layer.enabled: true
+                    layer.enabled: true
 
-                Rectangle {
-                    color: "white"
-                    anchors.fill: parent
-
-                    TextEdit{
+                    Rectangle {
+                        color: "white"
                         anchors.fill: parent
 
-                        text: "klasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \n"
+                        TextEdit{
+                            anchors.fill: parent
+
+                            text: "klasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \n"
+                        }
                     }
                 }
             }
