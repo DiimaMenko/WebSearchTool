@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
+import QmlInteractions.myself 1.0
 
 Window {
     id: root
@@ -11,6 +12,18 @@ Window {
     minimumHeight: 480
     visible: true
     title: qsTr("Web Search Tool")
+
+    QmlInteractions
+    {
+        id: actionsRunner
+        onSearchResultsChanged:{
+            searchResultsColumn
+            var component;
+            var sprite;
+            component = Qt.createComponent("SearchResult.qml");
+            sprite = component.createObject(container, {"x": 100, "y": 100});
+        }
+    }
 
     Rectangle {
         id: backgroundImage
@@ -120,7 +133,7 @@ Window {
 
                                 TextInput {
                                     id: startUrlInput
-                                    text: "Starting url"
+                                    text: "http://www.google.com/"
                                     anchors.fill: parent
 
                                     selectByMouse: true
@@ -146,6 +159,10 @@ Window {
                                     text: "Start"
                                     font.pixelSize: 16
                                     font.bold: true
+
+                                    onClicked: {
+                                         actionsRunner.runSearch(searchRequestInput.text, startUrlInput.text)
+                                    }
                                 }
 
                                 Button {
@@ -454,6 +471,7 @@ Window {
                             clip: true
 
                             ColumnLayout{
+                                id: searchResultsColumn
                                 anchors.fill: parent
                                 anchors.bottomMargin: 10
                                 spacing: 10
@@ -542,10 +560,11 @@ Window {
                                 clip: true
 
                                 TextEdit{
+                                    id: logTextEdit
                                     anchors.fill: parent
                                     selectByMouse: true
 
-                                    text: "klasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \nklasjdfhlkas fhlasf as\n as;dofy aiosehfl;ash f;lasdfh kl;ajsdhf \n"
+                                    text: ""
                                 }
                             }
                         }

@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "qmlinteractions.h"
 
 int main(int argc, char *argv[])
 {
@@ -7,6 +8,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
+    qmlRegisterType<QmlInteractions>("QmlInteractions.myself", 1, 0, "QmlInteractions");
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;

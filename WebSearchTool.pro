@@ -7,7 +7,10 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp
+        main.cpp \
+        qmlinteractions.cpp \
+        webhelper.cpp \
+        webpage.cpp
 
 RESOURCES += qml.qrc \
     images.qrc
@@ -24,3 +27,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
+
+HEADERS += \
+    qmlinteractions.h \
+    webhelper.h \
+    webpage.h
