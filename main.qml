@@ -13,15 +13,15 @@ Window {
     visible: true
     title: qsTr("Web Search Tool")
 
-    QmlInteractions
-    {
+    QmlInteractions{
         id: actionsRunner
-        onSearchResultsChanged:{
-            searchResultsColumn
+        onSearchResultsChanged: {
+            logTextEdit.text = actionsRunner.getExistingLinks()
             var component;
-            var sprite;
             component = Qt.createComponent("SearchResult.qml");
-            sprite = component.createObject(container, {"x": 100, "y": 100});
+            if (component.status == Component.Ready) {
+                var sprite = component.createObject(searchResultsColumn, { text: actionsRunner.getLastSearchResults(), height: 24});
+            }
         }
     }
 
@@ -73,6 +73,7 @@ Window {
                             spacing: 10
 
                             Text {
+                                id: enterSearchRequestText
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 24
 
@@ -99,7 +100,7 @@ Window {
                                 TextInput {
                                     anchors.fill: parent
                                     id: searchRequestInput
-                                    text: "Search request"
+                                    text: "Google"
 
                                     layer.enabled: true
                                     selectByMouse: true
@@ -161,7 +162,8 @@ Window {
                                     font.bold: true
 
                                     onClicked: {
-                                         actionsRunner.runSearch(searchRequestInput.text, startUrlInput.text)
+                                        startSearchButton.enabled = false
+                                        actionsRunner.runSearch(searchRequestInput.text, startUrlInput.text, scanUrlsCountSlider.value)
                                     }
                                 }
 
@@ -199,7 +201,8 @@ Window {
 
                             ProgressBar {
                                 id: progressBar
-                                value: testSlider.value
+
+                                value: actionsRunner.getSearchProgress()
 
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 24
@@ -308,11 +311,15 @@ Window {
 
                                 Slider {
                                     id: threadsCountSlider
+
                                     Layout.fillHeight: true
+
                                     from: 1
                                     to: 2048
                                     value: 4
                                     stepSize: 1
+
+                                    handle: null
                                 }
 
                                 TextInput {
@@ -338,7 +345,6 @@ Window {
                                 id: maximumScanUrlsCount
                                 visible: showHideAdvanced.advancedSectionVisible
 
-                                Layout.fillWidth: true
                                 Layout.preferredHeight: 24
 
                                 layer.enabled: true
@@ -369,6 +375,7 @@ Window {
 
 
                             RowLayout {
+                                id: scanUrlsCount
                                 visible: showHideAdvanced.advancedSectionVisible
 
                                 Layout.fillWidth: true
@@ -383,9 +390,11 @@ Window {
                                     Layout.fillHeight: true
 
                                     from: 1
-                                    to:4096
+                                    to: 4096
                                     value: 4
                                     stepSize: 1
+
+                                    handle: null
                                 }
 
                                 TextInput {
@@ -394,7 +403,7 @@ Window {
                                     selectByMouse: true
 
                                     Layout.preferredWidth: 40
-                                    Layout.fillHeight: true
+                                    //Layout.fillHeight: true
 
                                     horizontalAlignment: TextInput.AlignLeft
 
@@ -474,64 +483,66 @@ Window {
                                 id: searchResultsColumn
                                 anchors.fill: parent
                                 anchors.bottomMargin: 10
+                                anchors.rightMargin: 10
                                 spacing: 10
 
-                                Button{
-                                    id: button1
-                                    text: "button1"
-                                }
-                                Button{
-                                    id: button2
-                                    text: "button2"
-                                }
-                                Button{
-                                    id: button3
-                                    text: "button4"
-                                }
-                                Button{
-                                    id: button4
-                                    text: "button4"
-                                }
-                                Button{
-                                    id: button5
-                                    text: "button5"
-                                }
-                                Button{
-                                    id: button6
-                                    text: "button6"
-                                }
-                                Button{
-                                    id: button7
-                                    text: "button7"
-                                }
-                                Button{
-                                    id: button8
-                                    text: "button8"
-                                }
-                                Button{
-                                    id: button9
-                                    text: "button9"
-                                }
-                                Button{
-                                    id: button10
-                                    text: "button10"
-                                }
-                                Button{
-                                    id: button11
-                                    text: "button11"
-                                }
-                                Button{
-                                    id: button12
-                                    text: "button12"
-                                }
-                                Button{
-                                    id: button13
-                                    text: "button13"
-                                }
-                                Button{
-                                    id: button14
-                                    text: "button14"
-                                }
+
+//                                Button{
+//                                    id: button1
+//                                    text: "button1"
+//                                }
+//                                Button{
+//                                    id: button2
+//                                    text: "button2"
+//                                }
+//                                Button{
+//                                    id: button3
+//                                    text: "button4"
+//                                }
+//                                Button{
+//                                    id: button4
+//                                    text: "button4"
+//                                }
+//                                Button{
+//                                    id: button5
+//                                    text: "button5"
+//                                }
+//                                Button{
+//                                    id: button6
+//                                    text: "button6"
+//                                }
+//                                Button{
+//                                    id: button7
+//                                    text: "button7"
+//                                }
+//                                Button{
+//                                    id: button8
+//                                    text: "button8"
+//                                }
+//                                Button{
+//                                    id: button9
+//                                    text: "button9"
+//                                }
+//                                Button{
+//                                    id: button10
+//                                    text: "button10"
+//                                }
+//                                Button{
+//                                    id: button11
+//                                    text: "button11"
+//                                }
+//                                Button{
+//                                    id: button12
+//                                    text: "button12"
+//                                }
+//                                Button{
+//                                    id: button13
+//                                    text: "button13"
+//                                }
+//                                Button{
+//                                    id: button14
+//                                    text: "button14"
+//                                }
                             }
                         }
 
@@ -542,6 +553,8 @@ Window {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.preferredHeight: 200
+                            Layout.maximumHeight: 200
+                            Layout.minimumHeight: 200
 
                             layer.enabled: true
                             clip: true

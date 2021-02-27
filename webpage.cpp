@@ -39,7 +39,6 @@ void WebPage::GetBodyFromHtml()
     int64_t endIndex;
     while(startIndex <= endBodyIndex)
     {
-        qDebug() << startIndex << "\t" << endIndex;
         if(startIndex == _fullHtml.indexOf("<script", startIndex - 1))
         {
             startIndex = _fullHtml.indexOf("</script>", startIndex);
@@ -59,16 +58,28 @@ void WebPage::GetBodyFromHtml()
 
 void WebPage::GetLinksFromBody()
 {
-    int64_t current_index = startBodyIndex;
-    while(current_index < endBodyIndex)
+    int64_t startIndex = startBodyIndex + 1;
+    int64_t length = 1;
+    int64_t endIndex = startIndex + 1;
+
+    while(startIndex <= endBodyIndex)
     {
+        startIndex = _fullHtml.indexOf("\"http://", startIndex);
+        if(startIndex < 0)
+        {
+            break;
+        }
 
+        endIndex = _fullHtml.indexOf("\"", startIndex + 1);
+
+        length = endIndex - startIndex - 1;
+        QString link = "";
+        link.append(_fullHtml.data() + startIndex + 1, length);
+
+        _bodyLinks.append(link);
+
+        startIndex = endIndex + 1;
     }
-}
-
-void WebPage::GetBodyTextFromHtml()
-{
-
 }
 
 QString WebPage::BodyText()
@@ -81,7 +92,12 @@ QString WebPage::FullHtml()
     return _fullHtml;
 }
 
-QString WebPage::Url()
+QList<QString> WebPage::GetLinks() const
+{
+    return _bodyLinks;
+}
+
+QString WebPage::Url() const
 {
     return _url;
 }

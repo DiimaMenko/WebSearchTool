@@ -26,11 +26,11 @@ public:
 
     void GetBodyFromHtml();
     void GetLinksFromBody();
-    void GetBodyTextFromHtml();
 
     QString BodyText();
     QString FullHtml();
-    QString Url();
+    QString Url() const;
+    QList<QString> GetLinks() const;
     bool IsPhraseFound();
 };
 
