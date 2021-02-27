@@ -20,6 +20,7 @@ void QmlInteractions::RunLoop()
     int i = 0;
     while(i < links.size())
     {
+        links[i].used = true;
         WebPage page(searchWord, links.at(i).url);
         page.GetBodyFromHtml();
         page.GetLinksFromBody();
@@ -31,12 +32,13 @@ void QmlInteractions::RunLoop()
             emit searchResultsChanged();
         }
         i++;
-        searchProgress = i / maximumScanUrlsCount;
+        searchProgress = double(i) / double(maximumScanUrlsCount);
+        emit progressChanged();
     }
+
     searchProgress = 1.0;
-    templink endlink;
-    endlink.url = "Search Finished";
-    links.append(endlink);
+    emit progressChanged();
+    emit searchFinished();
 }
 
 Q_INVOKABLE double QmlInteractions::getSearchProgress() const

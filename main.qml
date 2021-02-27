@@ -15,6 +15,7 @@ Window {
 
     QmlInteractions{
         id: actionsRunner
+
         onSearchResultsChanged: {
             logTextEdit.text = actionsRunner.getExistingLinks()
             var component;
@@ -22,6 +23,17 @@ Window {
             if (component.status == Component.Ready) {
                 var sprite = component.createObject(searchResultsColumn, { text: actionsRunner.getLastSearchResults(), height: 24});
             }
+        }
+
+        onProgressChanged:
+        {
+            progressBar.value = actionsRunner.getSearchProgress()
+        }
+
+        onSearchFinished: {
+            startSearchButton.enabled = true
+            progressBar.value = actionsRunner.getSearchProgress()
+            logTextEdit.text = actionsRunner.getExistingLinks() + "\nSearch finished\n"
         }
     }
 
@@ -202,7 +214,7 @@ Window {
                             ProgressBar {
                                 id: progressBar
 
-                                value: actionsRunner.getSearchProgress()
+                                value: 0.0
 
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 24

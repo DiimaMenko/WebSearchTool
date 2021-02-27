@@ -35,9 +35,11 @@ public:
     Q_INVOKABLE void runSearch(QString searchWord, QString startingUrl, int maximumScanUrls);
     void RunLoop();
     void AddLinks(const WebPage &page);
+    void NotifyProgressChanged();
 signals:
     void searchResultsChanged();
-
+    void searchFinished();
+    void progressChanged();
 };
 
 #endif // QMLINTERACTIONS_H
