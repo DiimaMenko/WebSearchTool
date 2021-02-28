@@ -34,8 +34,9 @@ public:
     explicit QmlInteractions (QObject* parent = 0) : QObject(parent) {}
     Q_INVOKABLE void runSearch(QString searchWord, QString startingUrl, int maximumScanUrls);
     void RunLoop();
-    void AddLinks(const WebPage &page);
+    void AddLinks(const QList<QString> &linkList);
     void NotifyProgressChanged();
+
 signals:
     void searchResultsChanged();
     void searchFinished();

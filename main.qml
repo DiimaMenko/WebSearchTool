@@ -175,6 +175,11 @@ Window {
 
                                     onClicked: {
                                         startSearchButton.enabled = false
+
+                                        for(var i = searchResultsColumn.children.length; i > 0 ; i--) {
+                                            searchResultsColumn.children[i-1].destroy()
+                                        }
+
                                         actionsRunner.runSearch(searchRequestInput.text, startUrlInput.text, scanUrlsCountSlider.value)
                                     }
                                 }
@@ -196,19 +201,6 @@ Window {
                                     font.pixelSize: 16
                                     font.bold: true
                                 }
-                            }
-
-                            Slider{
-                                id: testSlider
-
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 24
-
-                                layer.enabled: true
-                                clip: true
-
-                                value: 0.8
-                                //visible: false
                             }
 
                             ProgressBar {
@@ -403,7 +395,7 @@ Window {
 
                                     from: 1
                                     to: 4096
-                                    value: 4
+                                    value: 100
                                     stepSize: 1
 
                                     handle: null
@@ -497,67 +489,8 @@ Window {
                                 anchors.bottomMargin: 10
                                 anchors.rightMargin: 10
                                 spacing: 10
-
-
-//                                Button{
-//                                    id: button1
-//                                    text: "button1"
-//                                }
-//                                Button{
-//                                    id: button2
-//                                    text: "button2"
-//                                }
-//                                Button{
-//                                    id: button3
-//                                    text: "button4"
-//                                }
-//                                Button{
-//                                    id: button4
-//                                    text: "button4"
-//                                }
-//                                Button{
-//                                    id: button5
-//                                    text: "button5"
-//                                }
-//                                Button{
-//                                    id: button6
-//                                    text: "button6"
-//                                }
-//                                Button{
-//                                    id: button7
-//                                    text: "button7"
-//                                }
-//                                Button{
-//                                    id: button8
-//                                    text: "button8"
-//                                }
-//                                Button{
-//                                    id: button9
-//                                    text: "button9"
-//                                }
-//                                Button{
-//                                    id: button10
-//                                    text: "button10"
-//                                }
-//                                Button{
-//                                    id: button11
-//                                    text: "button11"
-//                                }
-//                                Button{
-//                                    id: button12
-//                                    text: "button12"
-//                                }
-//                                Button{
-//                                    id: button13
-//                                    text: "button13"
-//                                }
-//                                Button{
-//                                    id: button14
-//                                    text: "button14"
-//                                }
                             }
                         }
-
 
                         Rectangle{
                             visible: showLogButton.showLog

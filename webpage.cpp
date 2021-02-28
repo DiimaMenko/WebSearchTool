@@ -3,93 +3,153 @@
 
 WebPage::WebPage(QString searchPhrase, QString url)
 {
+    _errors = 0;
     _searchPhrase = searchPhrase;
     _url = url;
-    _fullHtml = WebHelper::DownloadHtml(url);
+    _fullHtml = new QString(WebHelper::DownloadHtml(url));
+    _searchPhraseFound = false;
+
+    if(_fullHtml->isEmpty())
+    {
+        _errors |= Error_Downloading;
+        return;
+    }
+
+    GetTitleFromHtml();
+    GetBodyFromHtml();
+    GetLinksFromBody();
+    GetTextFromBodyAndSearch();
+}
+
+void WebPage::GetTitleFromHtml()
+{
+    if(_errors != Success)
+    {
+        return;
+    }
+
+    int64_t startTitleIndex = _fullHtml->indexOf("<title");
+    if(startTitleIndex < 0)
+    {
+        _errors = Error_No_Title;
+        return;
+    }
+
+    startTitleIndex = _fullHtml->indexOf(">", startTitleIndex) + 1;
+    if(startTitleIndex <= 0)
+    {
+        _errors = Error_Parsing;
+        return;
+    }
+
+    int64_t endTitleIndex = _fullHtml->indexOf("</title>");
+    if(endTitleIndex < 0)
+    {
+        _errors = Error_No_Title;
+        return;
+    }
+
+    int64_t length = endTitleIndex - startTitleIndex;
+    _title.append(_fullHtml->data() + startTitleIndex, length);
 }
 
 void WebPage::GetBodyFromHtml()
 {
-    int64_t startBodyIndex = _fullHtml.indexOf("<body");
-    if(startBodyIndex < 0)
+    if(_errors != Success)
     {
-        error = Error_No_Body;
         return;
     }
 
-    startBodyIndex = _fullHtml.indexOf(">", startBodyIndex);
+    int64_t startBodyIndex = _fullHtml->indexOf("<body");
     if(startBodyIndex < 0)
     {
-        error = Error_Parsing;
+        _errors = Error_No_Body;
         return;
     }
 
-    int64_t endBodyIndex = _fullHtml.indexOf("</body>");
+    startBodyIndex = _fullHtml->indexOf(">", startBodyIndex) + 1;
+    if(startBodyIndex <= 0)
+    {
+        _errors = Error_Parsing;
+        return;
+    }
+
+    int64_t endBodyIndex = _fullHtml->indexOf("</body>");
     if(endBodyIndex < 0)
     {
-        error = Error_No_Body;
+        _errors = Error_No_Body;
         return;
     }
 
-    this->startBodyIndex = startBodyIndex + 1;
-    this->endBodyIndex = endBodyIndex;
+    int64_t length = endBodyIndex - startBodyIndex;
+    _body.append(_fullHtml->data() + startBodyIndex, length);
+    delete _fullHtml;
+}
 
-    int64_t startIndex = startBodyIndex + 1;
-    int64_t length = 1;
-    int64_t endIndex;
-    while(startIndex <= endBodyIndex)
+void WebPage::GetTextFromBodyAndSearch()
+{
+    if(_errors != Success)
     {
-        if(startIndex == _fullHtml.indexOf("<script", startIndex - 1))
+        return;
+    }
+    QString bodyText = "";
+    int64_t startIndex = 0;
+    int64_t length = 1;
+    int64_t endIndex = 1;
+
+    while(startIndex <= _body.length())
+    {
+        if(startIndex == _body.indexOf("<script", startIndex - 1))
         {
-            startIndex = _fullHtml.indexOf("</script>", startIndex);
+            startIndex = _body.indexOf("</script>", startIndex);
         }
-        else if(startIndex == _fullHtml.indexOf("<style", startIndex - 1))
+        else if(startIndex == _body.indexOf("<style", startIndex - 1))
         {
-            startIndex = _fullHtml.indexOf("</style>", startIndex);
+            startIndex = _body.indexOf("</style>", startIndex);
         }
 
-        endIndex = _fullHtml.indexOf("<", startIndex);
+        endIndex = _body.indexOf("<", startIndex);
 
         length = endIndex - startIndex;
-        _bodyText.append(_fullHtml.data() + startIndex, length);
-        startIndex = _fullHtml.indexOf(">", endIndex) + 1;
+        bodyText.append(_body.data() + startIndex, length);
+        startIndex = _body.indexOf(">", endIndex) + 1;
+
+        if(startIndex == 0)
+            break;
     }
+
+    _searchPhraseFound =  bodyText.indexOf(_searchPhrase, 0, Qt::CaseInsensitive) > -1;
 }
 
 void WebPage::GetLinksFromBody()
 {
-    int64_t startIndex = startBodyIndex + 1;
-    int64_t length = 1;
-    int64_t endIndex = startIndex + 1;
-
-    while(startIndex <= endBodyIndex)
+    if(_errors != Success)
     {
-        startIndex = _fullHtml.indexOf("\"http://", startIndex);
+        return;
+    }
+
+    int64_t startIndex = 0;
+    int64_t length = 1;
+    int64_t endIndex = 1;
+
+    while(startIndex <= _body.length())
+    {
+        startIndex = _body.indexOf("\"http://", startIndex);
         if(startIndex < 0)
         {
             break;
         }
 
-        endIndex = _fullHtml.indexOf("\"", startIndex + 1);
+        endIndex = _body.indexOf("\"", startIndex + 1);
 
         length = endIndex - startIndex - 1;
         QString link = "";
-        link.append(_fullHtml.data() + startIndex + 1, length);
+        link.append(_body.data() + startIndex + 1, length);
 
         _bodyLinks.append(link);
 
         startIndex = endIndex + 1;
     }
-}
-
-QString WebPage::BodyText()
-{
-    return _bodyText;
-}
-
-QString WebPage::FullHtml()
-{
-    return _fullHtml;
 }
 
 QList<QString> WebPage::GetLinks() const
@@ -102,7 +162,7 @@ QString WebPage::Url() const
     return _url;
 }
 
-bool WebPage::IsPhraseFound()
+bool WebPage::IsPhraseFound() const
 {
-    return _bodyText.indexOf(_searchPhrase, 0, Qt::CaseInsensitive) > -1;
+    return this->_searchPhraseFound;
 }

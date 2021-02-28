@@ -6,6 +6,8 @@ Q_INVOKABLE void QmlInteractions::runSearch(QString searchWord, QString starting
     searchProgress = 0.0;
     maximumScanUrlsCount = maximumScanUrls;
     searchResults.clear();
+    links.clear();
+
     this->searchWord = searchWord;
     templink link;
     link.url = startingUrl;
@@ -22,9 +24,7 @@ void QmlInteractions::RunLoop()
     {
         links[i].used = true;
         WebPage page(searchWord, links.at(i).url);
-        page.GetBodyFromHtml();
-        page.GetLinksFromBody();
-        AddLinks(page);
+        AddLinks(page.GetLinks());
 
         if(page.IsPhraseFound())
         {
@@ -65,12 +65,12 @@ Q_INVOKABLE QString QmlInteractions::getExistingLinks() const
     return linksTable;
 }
 
-void QmlInteractions::AddLinks(const WebPage &page)
+void QmlInteractions::AddLinks(const QList<QString> &linkList)
 {
-    for(int i = 0; i < page.GetLinks().size() && links.size() < maximumScanUrlsCount; i++)
+    for(int i = 0; i < linkList.size() && links.size() < maximumScanUrlsCount; i++)
     {
         templink link;
-        link.url = page.GetLinks().at(i);
+        link.url = linkList.at(i);
         link.used = false;
 
         if(!links.contains(link))
