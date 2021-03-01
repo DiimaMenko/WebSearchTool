@@ -21,7 +21,7 @@ Window {
             var component;
             component = Qt.createComponent("SearchResult.qml");
             if (component.status == Component.Ready) {
-                var sprite = component.createObject(searchResultsColumn, { text: actionsRunner.getLastSearchResults(), height: 24});
+                var sprite = component.createObject(searchResultsColumn, { text: actionsRunner.getLastSearchResultTitle(), link: actionsRunner.getLastSearchResultLink(), height: 24});
             }
         }
 
@@ -200,6 +200,10 @@ Window {
                                     text: "Stop"
                                     font.pixelSize: 16
                                     font.bold: true
+
+                                    onClicked: {
+                                        actionsRunner.stopSearch()
+                                    }
                                 }
                             }
 

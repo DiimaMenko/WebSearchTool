@@ -152,6 +152,11 @@ void WebPage::GetLinksFromBody()
     }
 }
 
+QString WebPage::Title() const
+{
+    return _title;
+}
+
 QList<QString> WebPage::GetLinks() const
 {
     return _bodyLinks;

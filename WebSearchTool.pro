@@ -9,6 +9,7 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         qmlinteractions.cpp \
+        searchresult.cpp \
         webhelper.cpp \
         webpage.cpp
 
@@ -30,5 +31,6 @@ DISTFILES +=
 
 HEADERS += \
     qmlinteractions.h \
+    searchresult.h \
     webhelper.h \
     webpage.h

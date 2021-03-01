@@ -1,5 +1,6 @@
 #include "qmlinteractions.h"
 #include "webhelper.h"
+#include "searchresult.h"
 
 Q_INVOKABLE void QmlInteractions::runSearch(QString searchWord, QString startingUrl, int maximumScanUrls)
 {
@@ -20,7 +21,7 @@ Q_INVOKABLE void QmlInteractions::runSearch(QString searchWord, QString starting
 void QmlInteractions::RunLoop()
 {
     int i = 0;
-    while(i < links.size())
+    while(i < links.size() && !stopPressed)
     {
         links[i].used = true;
         WebPage page(searchWord, links.at(i).url);
@@ -28,7 +29,8 @@ void QmlInteractions::RunLoop()
 
         if(page.IsPhraseFound())
         {
-            searchResults.append(page.Url());
+            auto result = new SearchResult(page.Title(), page.Url());
+            searchResults.append(*result);
             emit searchResultsChanged();
         }
         i++;
@@ -39,30 +41,6 @@ void QmlInteractions::RunLoop()
     searchProgress = 1.0;
     emit progressChanged();
     emit searchFinished();
-}
-
-Q_INVOKABLE double QmlInteractions::getSearchProgress() const
-{
-    return searchProgress;
-}
-
-Q_INVOKABLE QString QmlInteractions::getLastSearchResults() const
-{
-    if(searchResults.size() > 0)
-        return searchResults.last();
-    else
-        return "";
-}
-
-Q_INVOKABLE QString QmlInteractions::getExistingLinks() const
-{
-    QString linksTable = "";
-    for(int i = 0; i < links.size(); i++)
-    {
-        auto link = links.at(i);
-        linksTable.append(QString::number(i) + "\t" + (link.used ? "used\t" : "unused\t") + link.url + "\n");
-    }
-    return linksTable;
 }
 
 void QmlInteractions::AddLinks(const QList<QString> &linkList)
@@ -78,4 +56,41 @@ void QmlInteractions::AddLinks(const QList<QString> &linkList)
             links.append(link);
         }
     }
+}
+
+Q_INVOKABLE double QmlInteractions::getSearchProgress() const
+{
+    return searchProgress;
+}
+
+Q_INVOKABLE QString QmlInteractions::getLastSearchResultTitle() const
+{
+    if(searchResults.size() > 0)
+        return searchResults.last().text;
+    else
+        return "";
+}
+
+Q_INVOKABLE QString QmlInteractions::getLastSearchResultLink() const
+{
+    if(searchResults.size() > 0)
+        return searchResults.last().link;
+    else
+        return "";
+}
+
+Q_INVOKABLE QString QmlInteractions::getExistingLinks() const
+{
+    QString linksTable = "";
+    for(int i = 0; i < links.size(); i++)
+    {
+        auto link = links.at(i);
+        linksTable.append(QString::number(i) + "\t" + (link.used ? "used\t" : "unused\t") + link.url + "\n");
+    }
+    return linksTable;
+}
+
+Q_INVOKABLE void QmlInteractions::stopSearch()
+{
+    stopPressed = true;
 }

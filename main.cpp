@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
 #endif
 
     qmlRegisterType<QmlInteractions>("QmlInteractions.myself", 1, 0, "QmlInteractions");
+
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;

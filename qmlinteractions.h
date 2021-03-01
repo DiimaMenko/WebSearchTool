@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "webpage.h"
+#include "searchresult.h"
 
 struct templink{
     bool used;
@@ -21,16 +22,19 @@ struct templink{
 class QmlInteractions: public QObject
 {
     Q_OBJECT
-    QList<QString> searchResults;
+    QList<SearchResult> searchResults;
     QList<templink> links;
     int64_t maximumScanUrlsCount;
     QString searchWord;
     double searchProgress;
+    bool stopPressed;
 
 public:
-    Q_INVOKABLE QString getLastSearchResults() const;
+    Q_INVOKABLE QString getLastSearchResultTitle() const;
+    Q_INVOKABLE QString getLastSearchResultLink() const;
     Q_INVOKABLE QString getExistingLinks() const;
     Q_INVOKABLE double getSearchProgress() const;
+    Q_INVOKABLE void stopSearch();
     explicit QmlInteractions (QObject* parent = 0) : QObject(parent) {}
     Q_INVOKABLE void runSearch(QString searchWord, QString startingUrl, int maximumScanUrls);
     void RunLoop();

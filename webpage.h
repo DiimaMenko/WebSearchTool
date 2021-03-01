@@ -31,6 +31,7 @@ public:
     void GetTitleFromHtml();
 
     QString Url() const;
+    QString Title() const;
     QList<QString> GetLinks() const;
     bool IsPhraseFound() const;
 };
