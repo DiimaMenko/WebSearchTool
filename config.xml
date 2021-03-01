@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>WebSearchTool</Name>
+    <Version>1.0.0</Version>
+    <Title>Web Search Tool Installer</Title>
+    <Publisher>Dmytro</Publisher>
+    <StartMenuDir>Web Search Tool</StartMenuDir>
+    <TargetDir>@HomeDir@/WebSearchTool</TargetDir>
+</Installer>

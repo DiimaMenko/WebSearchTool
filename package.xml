@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Web Search Tool</DisplayName>
+    <Description>This will install Web Search Tool on your computer.</Description>
+    <Version>0.1.0-1</Version>
+    <ReleaseDate>2021-03-01</ReleaseDate>
+    <Licenses>
+        <License name="Beer Public License Agreement" file="license.txt"/>
+    </Licenses>
+    <Default>true</Default>
+</Package>
