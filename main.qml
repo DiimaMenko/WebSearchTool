@@ -17,12 +17,15 @@ Window {
         id: actionsRunner
 
         onSearchResultsChanged: {
-            logTextEdit.text = actionsRunner.getExistingLinks()
             var component;
             component = Qt.createComponent("SearchResult.qml");
             if (component.status == Component.Ready) {
                 var sprite = component.createObject(searchResultsColumn, { text: actionsRunner.getLastSearchResultTitle(), link: actionsRunner.getLastSearchResultLink(), height: 24});
             }
+        }
+
+        onLogUpdated: {
+            logTextEdit.text += actionsRunner.getLastLogMessage() + "\n"
         }
 
         onProgressChanged:
@@ -31,9 +34,9 @@ Window {
         }
 
         onSearchFinished: {
-            startSearchButton.enabled = true
             progressBar.value = actionsRunner.getSearchProgress()
-            logTextEdit.text = actionsRunner.getExistingLinks() + "\nSearch finished\n"
+            logTextEdit.text += actionsRunner.getLastLogMessage() + "\nSearch finished\n"
+            startSearchButton.enabled = true
         }
     }
 
@@ -180,7 +183,7 @@ Window {
                                             searchResultsColumn.children[i-1].destroy()
                                         }
 
-                                        actionsRunner.runSearch(searchRequestInput.text, startUrlInput.text, scanUrlsCountSlider.value)
+                                        actionsRunner.runSearch(searchRequestInput.text, startUrlInput.text, scanUrlsCountSlider.value, threadsCountSlider.value)
                                     }
                                 }
 

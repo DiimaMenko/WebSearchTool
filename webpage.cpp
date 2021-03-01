@@ -35,7 +35,7 @@ void WebPage::GetTitleFromHtml()
         return;
     }
 
-    startTitleIndex = _fullHtml->indexOf(">", startTitleIndex) + 1;
+    startTitleIndex = _fullHtml->indexOf(">", startTitleIndex + 1) + 1;
     if(startTitleIndex <= 0)
     {
         _errors = Error_Parsing;
@@ -67,7 +67,7 @@ void WebPage::GetBodyFromHtml()
         return;
     }
 
-    startBodyIndex = _fullHtml->indexOf(">", startBodyIndex) + 1;
+    startBodyIndex = _fullHtml->indexOf(">", startBodyIndex + 1) + 1;
     if(startBodyIndex <= 0)
     {
         _errors = Error_Parsing;
@@ -108,13 +108,15 @@ void WebPage::GetTextFromBodyAndSearch()
             startIndex = _body.indexOf("</style>", startIndex);
         }
 
-        endIndex = _body.indexOf("<", startIndex);
+        endIndex = _body.indexOf("<", startIndex + 1);
+        if(endIndex < 0)
+            break;
 
         length = endIndex - startIndex;
         bodyText.append(_body.data() + startIndex, length);
-        startIndex = _body.indexOf(">", endIndex) + 1;
+        startIndex = _body.indexOf(">", endIndex + 1);
 
-        if(startIndex == 0)
+        if(startIndex < 0)
             break;
     }
 
@@ -141,6 +143,8 @@ void WebPage::GetLinksFromBody()
         }
 
         endIndex = _body.indexOf("\"", startIndex + 1);
+        if(endIndex <= 0)
+            break;
 
         length = endIndex - startIndex - 1;
         QString link = "";
@@ -149,6 +153,8 @@ void WebPage::GetLinksFromBody()
         _bodyLinks.append(link);
 
         startIndex = endIndex + 1;
+        if(startIndex <= 0)
+            break;
     }
 }
 
