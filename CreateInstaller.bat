@@ -11,7 +11,7 @@ set "fullstamp=%YYYY%-%MM%-%DD%_%HH%-%Min%-%Sec%"
 
 rem preparing directories
 
-rmdir ..\WebSearchToolInstaller\ /s
+rmdir ..\WebSearchToolInstaller\ /s /Y
 
 mkdir ..\WebSearchToolInstaller\packages\com.dmytro.WebSearchTool\data
 mkdir ..\WebSearchToolInstaller\packages\com.dmytro.WebSearchTool\meta
@@ -32,9 +32,8 @@ D:\Programs\Qt\5.14.2\mingw73_64\bin\windeployqt.exe ..\WebSearchToolInstaller\p
 
 rem run installer creator (binarycreator)
 
-pause
-D:\Programs\Qt\Tools\QtInstallerFramework\4.0\bin\binarycreator.exe -c config/config.xml -p packages ..\WebSearchToolInstaller\WebSearchToolInstaller.exe 
+D:\Programs\Qt\Tools\QtInstallerFramework\4.0\bin\binarycreator.exe -c ..\WebSearchToolInstaller\config\config.xml -p ..\WebSearchToolInstaller\packages ..\WebSearchToolInstaller\WebSearchToolInstaller.exe 
 
-pause
 rem copying installer to release directory
 copy ..\WebSearchToolInstaller\WebSearchToolInstaller.exe  .\releases\%fullstamp%\
+pause
