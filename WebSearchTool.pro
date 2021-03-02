@@ -10,8 +10,8 @@ SOURCES += \
         logger.cpp \
         main.cpp \
         qmlinteractions.cpp \
-        searchfactory.cpp \
         searchresult.cpp \
+        searchworker.cpp \
         webhelper.cpp \
         webpage.cpp
 
@@ -34,7 +34,7 @@ DISTFILES +=
 HEADERS += \
     logger.h \
     qmlinteractions.h \
-    searchfactory.h \
     searchresult.h \
+    searchworker.h \
     webhelper.h \
     webpage.h

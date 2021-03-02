@@ -6,8 +6,8 @@ import QmlInteractions.myself 1.0
 
 Window {
     id: root
-    width: 800
-    height: 600
+    width: 1200
+    height: 800
     minimumWidth: 640
     minimumHeight: 480
     visible: true
@@ -22,6 +22,7 @@ Window {
             if (component.status == Component.Ready) {
                 var sprite = component.createObject(searchResultsColumn, { text: actionsRunner.getLastSearchResultTitle(), link: actionsRunner.getLastSearchResultLink(), height: 24});
             }
+            actionsRunner.getNextResult()
         }
 
         onLogUpdated: {
@@ -35,7 +36,7 @@ Window {
 
         onSearchFinished: {
             progressBar.value = actionsRunner.getSearchProgress()
-            logTextEdit.text += actionsRunner.getLastLogMessage() + "\nSearch finished\n"
+            logTextEdit.text += actionsRunner.getLogger().textLog
             startSearchButton.enabled = true
         }
     }
@@ -149,7 +150,8 @@ Window {
 
                                 TextInput {
                                     id: startUrlInput
-                                    text: "http://www.google.com/"
+                                    //text: "http://www.google.com/"
+                                    text:"http://apache.org/"
                                     anchors.fill: parent
 
                                     selectByMouse: true
@@ -528,6 +530,7 @@ Window {
                                     id: logTextEdit
                                     anchors.fill: parent
                                     selectByMouse: true
+                                    readOnly : true
 
                                     text: ""
                                 }

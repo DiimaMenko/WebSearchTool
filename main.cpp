@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "qmlinteractions.h"
+#include "logger.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,6 +10,7 @@ int main(int argc, char *argv[])
 #endif
 
     qmlRegisterType<QmlInteractions>("QmlInteractions.myself", 1, 0, "QmlInteractions");
+    qmlRegisterType<Logger>("QmlInteractions.myself", 1, 0, "Logger");
 
     QGuiApplication app(argc, argv);
 

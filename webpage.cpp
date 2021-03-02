@@ -31,26 +31,27 @@ void WebPage::GetTitleFromHtml()
     int64_t startTitleIndex = _fullHtml->indexOf("<title");
     if(startTitleIndex < 0)
     {
-        _errors = Error_No_Title;
+        _errors |= Error_No_Title;
         return;
     }
 
     startTitleIndex = _fullHtml->indexOf(">", startTitleIndex + 1) + 1;
     if(startTitleIndex <= 0)
     {
-        _errors = Error_Parsing;
+        _errors |= Error_Parsing;
         return;
     }
 
     int64_t endTitleIndex = _fullHtml->indexOf("</title>");
     if(endTitleIndex < 0)
     {
-        _errors = Error_No_Title;
+        _errors |= Error_No_Title;
         return;
     }
 
     int64_t length = endTitleIndex - startTitleIndex;
     _title.append(_fullHtml->data() + startTitleIndex, length);
+    _title = _title.remove("\n");
 }
 
 void WebPage::GetBodyFromHtml()
@@ -63,21 +64,21 @@ void WebPage::GetBodyFromHtml()
     int64_t startBodyIndex = _fullHtml->indexOf("<body");
     if(startBodyIndex < 0)
     {
-        _errors = Error_No_Body;
+        _errors |= Error_No_Body;
         return;
     }
 
     startBodyIndex = _fullHtml->indexOf(">", startBodyIndex + 1) + 1;
     if(startBodyIndex <= 0)
     {
-        _errors = Error_Parsing;
+        _errors |= Error_Parsing;
         return;
     }
 
     int64_t endBodyIndex = _fullHtml->indexOf("</body>");
     if(endBodyIndex < 0)
     {
-        _errors = Error_No_Body;
+        _errors |= Error_No_Body;
         return;
     }
 
@@ -175,5 +176,5 @@ QString WebPage::Url() const
 
 bool WebPage::IsPhraseFound() const
 {
-    return this->_searchPhraseFound;
+    return _searchPhraseFound;
 }
