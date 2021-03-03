@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include "qmlinteractions.h"
 #include "logger.h"
+#include "documenthandler.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<QmlInteractions>("QmlInteractions.myself", 1, 0, "QmlInteractions");
     qmlRegisterType<Logger>("QmlInteractions.myself", 1, 0, "Logger");
+    qmlRegisterType<DocumentHandler>("QmlInteractions.myself", 1, 0, "DocumentHandler");
 
     QGuiApplication app(argc, argv);
 

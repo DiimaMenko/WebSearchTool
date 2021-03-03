@@ -6,9 +6,10 @@
 
 Logger::Logger()
 {
-    textLog = "";
+    //textLog = "";
+    //_log.clear();
+
     _nextMessage = 0;
-    _log.clear();
     _logFile = new QFile("log.txt");
     if(!_logFile->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate))
     {
@@ -23,14 +24,17 @@ void Logger::AddMessage(const QString &message)
 {
     auto fullMessage = Format(message);
     lock.lockForWrite();
+
     //_log.append(fullMessage);
-    textLog.append(fullMessage.toUtf8() + "\n");
+    //textLog.append(fullMessage.toUtf8() + "\n");
+
     qDebug() << fullMessage;
     if(_logToFile)
     {
         *logStream << fullMessage << "\n";
         _logFile->flush();
     }
+
     lock.unlock();
 }
 
@@ -44,17 +48,17 @@ QString Logger::Format(const QString &message)
              + message;
 }
 
-QString Logger::GetLastMessage()
-{
-    QString message = "";
-    //_indexLock.lockForRead();
+//QString Logger::GetLastMessage()
+//{
+//    QString message = "";
+//    //_indexLock.lockForRead();
 
-    if(_nextMessage < _log.size())
-    {
-        message= _log[_nextMessage];
-        _nextMessage++;
-    }
+//    if(_nextMessage < _log.size())
+//    {
+//        message= _log[_nextMessage];
+//        _nextMessage++;
+//    }
 
-    //_indexLock.unlock();
-    return message;
-}
+//    //_indexLock.unlock();
+//    return message;
+//}

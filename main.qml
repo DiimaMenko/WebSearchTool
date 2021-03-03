@@ -36,7 +36,6 @@ Window {
 
         onSearchFinished: {
             progressBar.value = actionsRunner.getSearchProgress()
-            logTextEdit.text += actionsRunner.getLogger().textLog
             startSearchButton.enabled = true
         }
     }
@@ -196,6 +195,19 @@ Window {
                                     text: "Pause"
                                     font.pixelSize: 16
                                     font.bold: true
+
+                                    onClicked: {
+                                        if(text == "Pause")
+                                        {
+                                            text = "Resume"
+                                        }
+                                        else
+                                        {
+                                            text = "Pause"
+                                        }
+
+                                        actionsRunner.pauseSearch()
+                                    }
                                 }
 
                                 Button {
@@ -308,7 +320,7 @@ Window {
                                 layer.enabled: true
                                 clip: true
 
-                                text: "Recommended for your system is 4"
+                                text: "Recommended for your system is " + actionsRunner.getRecommendedThreadCount()
 
                                 font.pixelSize: 12
                                 font.italic: true
@@ -526,14 +538,41 @@ Window {
                                 layer.enabled: true
                                 clip: true
 
-                                TextEdit{
-                                    id: logTextEdit
+                                TextArea {
+                                    Accessible.name: "document"
+                                    id: logArea
                                     anchors.fill: parent
+                                    baseUrl: "qrc:/"
+                                    text: document.text
+                                    textFormat: Qt.PlainText
                                     selectByMouse: true
                                     readOnly : true
-
-                                    text: ""
+//                                    Component.onCompleted: forceActiveFocus()
                                 }
+
+                                DocumentHandler {
+                                    id: document
+                                    target: logArea
+//                                    cursorPosition: logArea.cursorPosition
+//                                    selectionStart: logArea.selectionStart
+//                                    selectionEnd: logArea.selectionEnd
+                                    textColor: "black"
+
+                                    Component.onCompleted: document.fileUrl = "log.txt"
+
+//                                    onError: {
+//                                        errorDialog.text = message
+//                                        errorDialog.visible = true
+//                                    }
+                                }
+//                                TextEdit{
+//                                    id: logTextEdit
+//                                    anchors.fill: parent
+//                                    selectByMouse: true
+//                                    readOnly : true
+
+//                                    text: ""
+//                                }
                             }
                         }
                     }

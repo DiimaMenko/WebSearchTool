@@ -9,7 +9,6 @@
 class Logger : public QObject
 {
     Q_OBJECT
-    QList<QString> _log;
     QReadWriteLock lock;
     QFile *_logFile;
     QTextStream *logStream;
@@ -20,23 +19,26 @@ class Logger : public QObject
 
     QString Format(const QString &message);
 public:
-    Q_PROPERTY(QByteArray textLog READ TextLog NOTIFY textLogChanged)
-    QByteArray textLog;
-    QByteArray TextLog(){
-        return textLog;
-    }
+//    Q_PROPERTY(QByteArray textLog READ TextLog NOTIFY textLogChanged)
+//    QByteArray textLog;
+//    QByteArray TextLog(){
+//        return textLog;
+//    }
 
     Logger();
     void AddMessage(const QString &message);
-    QString GetLastMessage();
+//    QString GetLastMessage();
 
     ~Logger(){
-        _logFile->flush();
-        _logFile->close();
+        if(_logFile->isOpen())
+        {
+            _logFile->flush();
+            _logFile->close();
+        }
     }
 
-signals:
-    void textLogChanged(QString);
+//signals:
+//    void textLogChanged(QString);
 };
 
 #endif // LOGGER_H

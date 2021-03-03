@@ -36,6 +36,7 @@ class QmlInteractions: public QObject
     QString _searchWord;
     double _searchProgress;
     bool _stopPressed;
+    bool _pausePressed;
 
     Logger _log;
 
@@ -51,12 +52,13 @@ public:
     explicit QmlInteractions (QObject* parent = 0) : QObject(parent) {}
     Q_INVOKABLE QString getLastSearchResultTitle();
     Q_INVOKABLE QString getLastSearchResultLink() const;
-    Q_INVOKABLE QString getLastLogMessage();
     Q_INVOKABLE double getSearchProgress() const;
     Q_INVOKABLE void getNextResult();
     Q_INVOKABLE void stopSearch();
+    Q_INVOKABLE void pauseSearch();
     Q_INVOKABLE void runSearch(QString searchWord, QString startingUrl, int maximumScanUrls, int threadsCount);
     Q_INVOKABLE Logger *getLogger(){return &_log;}
+    Q_INVOKABLE int getRecommendedThreadCount();
 
     void RunLoop();
     void AddResult(QString title, QString url);
@@ -65,6 +67,8 @@ public:
 
     QString GetNextLink();
     void AddToLog(const QString &message);
+    bool StopPressed();
+    bool PausePressed();
 
 public slots:
     void ThreadFinishedWork(QString threadId);

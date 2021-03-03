@@ -20,6 +20,7 @@ protected:
 public:
     explicit SearchWorker(QmlInteractions *i_dataPointer, QString searchWord);
     void RunAlternative();
+    void FinalizeWork();
 
 signals:
     void ThreadFinishedWork(QString str);

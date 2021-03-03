@@ -6,6 +6,7 @@
 Q_INVOKABLE void QmlInteractions::runSearch(QString searchWord, QString startingUrl, int maximumScanUrls, int threadsCount)
 {
     AddToLog("Starting search");
+    _pausePressed = false;
     _stopPressed = false;
     _searchProgress = 0.0;
     _currentResultIterator = 0;
@@ -162,13 +163,28 @@ Q_INVOKABLE void QmlInteractions::getNextResult()
     _currentResultIterator++;
 }
 
-Q_INVOKABLE QString QmlInteractions::getLastLogMessage()
-{
-    return _log.GetLastMessage();
-}
-
 Q_INVOKABLE void QmlInteractions::stopSearch()
 {
     _stopPressed = true;
 }
 
+Q_INVOKABLE void QmlInteractions::pauseSearch()
+{
+    _pausePressed = !_pausePressed;
+}
+
+Q_INVOKABLE int QmlInteractions::getRecommendedThreadCount()
+{
+    return QThread::idealThreadCount();
+}
+
+bool QmlInteractions::StopPressed()
+{
+    return _stopPressed;
+}
+
+
+bool QmlInteractions::PausePressed()
+{
+    return _pausePressed;
+}

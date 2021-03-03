@@ -15,13 +15,12 @@ void SearchWorker::run()
         QString link = dataPointer->GetNextLink();
         if(link.isEmpty())
         {
-            std::stringstream stream;
-            stream << QThread::currentThreadId();
-
-            emit ThreadFinishedWork(QString::fromStdString(stream.str()));
-
-            exit(0);
-            return;
+           FinalizeWork();
+           return;
+        }
+        while(dataPointer->PausePressed())
+        {
+            msleep(100);
         }
         dataPointer->AddToLog("Starting work with link: " + link);
 
@@ -38,5 +37,16 @@ void SearchWorker::run()
             dataPointer->AddToLog("-Phrase is not found on \"" + page.Title() + "\" (" + page.Url() + ")");
         }
     }
-    while(true);
+    while(!dataPointer->StopPressed());
+    FinalizeWork();
+}
+
+void SearchWorker::FinalizeWork()
+{
+    std::stringstream stream;
+    stream << QThread::currentThreadId();
+
+    emit ThreadFinishedWork(QString::fromStdString(stream.str()));
+
+    exit(0);
 }
