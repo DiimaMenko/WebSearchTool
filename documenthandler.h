@@ -138,22 +138,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void targetChanged();
-    void cursorPositionChanged();
-    void selectionStartChanged();
-    void selectionEndChanged();
+//    void cursorPositionChanged();
+//    void selectionStartChanged();
+//    void selectionEndChanged();
 
-    void fontFamilyChanged();
-    void textColorChanged();
-    void alignmentChanged();
-
-    void boldChanged();
-    void italicChanged();
-    void underlineChanged();
-
-    void fontSizeChanged();
-    void defaultFontSizesChanged();
-
-    void fileUrlChanged();
 
     void textChanged();
     void documentTitleChanged();

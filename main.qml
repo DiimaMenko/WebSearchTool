@@ -25,9 +25,9 @@ Window {
             actionsRunner.getNextResult()
         }
 
-        onLogUpdated: {
-            logTextEdit.text += actionsRunner.getLastLogMessage() + "\n"
-        }
+//        onLogUpdated: {
+//            logTextEdit.text += actionsRunner.getLastLogMessage() + "\n"
+//        }
 
         onProgressChanged:
         {
