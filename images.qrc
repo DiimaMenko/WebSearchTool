@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>images/gradient_background.png</file>
-        <file>images/Logo2.png</file>
         <file>images/progress_bar.png</file>
         <file>images/triangle.png</file>
+        <file>images/Logo.png</file>
     </qresource>
 </RCC>

@@ -1,12 +1,18 @@
 #include "webpage.h"
 #include "webhelper.h"
+#include <QTime>
 
 WebPage::WebPage(QString searchPhrase, QString url)
 {
     _errors = 0;
     _searchPhrase = searchPhrase;
     _url = url;
+
+    auto startTime = QTime::currentTime();
+    auto overalStartTime = startTime;
     _fullHtml = new QString(WebHelper::DownloadHtml(url));
+    downloadingTime = startTime.msecsTo(QTime::currentTime());
+
     _searchPhraseFound = false;
 
     if(_fullHtml->isEmpty())
@@ -15,10 +21,38 @@ WebPage::WebPage(QString searchPhrase, QString url)
         return;
     }
 
+    pageSize = _fullHtml->size();
+
+    startTime = QTime::currentTime();
     GetTitleFromHtml();
+    searchingTitleTime = startTime.msecsTo(QTime::currentTime());
+
+    startTime = QTime::currentTime();
     GetBodyFromHtml();
+    gettingBodyTime = startTime.msecsTo(QTime::currentTime());
+
+    startTime = QTime::currentTime();
     GetLinksFromBody();
+    gettingLinksTime = startTime.msecsTo(QTime::currentTime());
+
+    startTime = QTime::currentTime();
     GetTextFromBodyAndSearch();
+    gettingTextFromBodyTime = startTime.msecsTo(QTime::currentTime());
+    overalTime = overalStartTime.msecsTo(QTime::currentTime());
+
+    if(overalTime - downloadingTime > 1000)
+    {
+        auto htmlFile = new QFile(Title().remove(QRegExp("[^a-zA-Z\\d\\s]")) + ".html");
+        if(!htmlFile->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append))
+        {
+            return;
+        }
+        auto htmlFileStream = new QTextStream(htmlFile);
+        *htmlFileStream << _url << "\n\n";
+        *htmlFileStream << *_fullHtml;
+        htmlFile->flush();
+        htmlFile->close();
+    }
 }
 
 void WebPage::GetTitleFromHtml()
@@ -84,7 +118,6 @@ void WebPage::GetBodyFromHtml()
 
     int64_t length = endBodyIndex - startBodyIndex;
     _body.append(_fullHtml->data() + startBodyIndex, length);
-    delete _fullHtml;
 }
 
 void WebPage::GetTextFromBodyAndSearch()
@@ -117,7 +150,7 @@ void WebPage::GetTextFromBodyAndSearch()
         bodyText.append(_body.data() + startIndex, length);
         startIndex = _body.indexOf(">", endIndex + 1);
 
-        if(startIndex < 0)
+        if(startIndex < endIndex)
             break;
     }
 
@@ -151,6 +184,7 @@ void WebPage::GetLinksFromBody()
         QString link = "";
         link.append(_body.data() + startIndex + 1, length);
 
+        link = link.mid(0, link.indexOf('#'));   // remove navigation inside page
         _bodyLinks.append(link);
 
         startIndex = endIndex + 1;
@@ -177,4 +211,9 @@ QString WebPage::Url() const
 bool WebPage::IsPhraseFound() const
 {
     return _searchPhraseFound;
+}
+
+int WebPage::GetErrorCode()
+{
+    return _errors;
 }

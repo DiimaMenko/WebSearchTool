@@ -44,12 +44,15 @@ class QmlInteractions: public QObject
     QReadWriteLock _lockResults;
     QReadWriteLock _lockNextLinkIterator;
     QReadWriteLock _lockFinishedThreadsCount;
+    QReadWriteLock _waitingThreadsCountLock;
     QList<SearchWorker*> _threads;
-    int64_t _nextLink;
-    int64_t _finishedThreadsCount;
+    int _nextLink;
+    int _finishedThreadsCount;
+    int threadsWaiting;
 
 public:
     explicit QmlInteractions (QObject* parent = 0) : QObject(parent) {}
+    ~QmlInteractions();
     Q_INVOKABLE QString getLastSearchResultTitle();
     Q_INVOKABLE QString getLastSearchResultLink() const;
     Q_INVOKABLE double getSearchProgress() const;
@@ -66,13 +69,12 @@ public:
     void NotifyProgressChanged();
 
     QString GetNextLink();
-    void AddToLog(const QString &message);
+    void AddToLog(MessageType messageType, const QString &message);
     bool StopPressed();
     bool PausePressed();
 
 public slots:
     void ThreadFinishedWork(QString threadId);
-//    void SomeThreadFinishedWork();
 
 signals:
     void searchResultsChanged();

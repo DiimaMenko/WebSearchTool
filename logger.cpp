@@ -6,8 +6,7 @@
 
 Logger::Logger()
 {
-    //textLog = "";
-    //_log.clear();
+    text = "";
 
     _nextMessage = 0;
     _logFile = new QFile("log.txt");
@@ -20,13 +19,13 @@ Logger::Logger()
     _logToFile = true;
 }
 
-void Logger::AddMessage(const QString &message)
+void Logger::AddMessage(MessageType messageType, const QString &message)
 {
-    auto fullMessage = Format(message);
+    auto fullMessage = Format(messageType, message);
     lock.lockForWrite();
 
-    //_log.append(fullMessage);
-    //textLog.append(fullMessage.toUtf8() + "\n");
+    text.push_front(fullMessage + "\n");
+    emit textLogChanged(fullMessage);
 
     qDebug() << fullMessage;
     if(_logToFile)
@@ -34,31 +33,18 @@ void Logger::AddMessage(const QString &message)
         *logStream << fullMessage << "\n";
         _logFile->flush();
     }
+    emit textLogChanged(fullMessage);
 
     lock.unlock();
 }
 
-QString Logger::Format(const QString &message)
+QString Logger::Format(MessageType messageType, const QString &message)
 {
     std::stringstream stream;
-    stream << QThread::currentThreadId();
+    stream << messageType << "\t" << QThread::currentThreadId();
 
     return QString::fromStdString(stream.str()) + "\t"
-             + QDateTime::currentDateTime().toString("yyyy.dd.mm hh:mm:ss.zzz") + "\t"
+             + QDateTime::currentDateTime().toString("hh:mm:ss.zzz") + "\t"
              + message;
 }
 
-//QString Logger::GetLastMessage()
-//{
-//    QString message = "";
-//    //_indexLock.lockForRead();
-
-//    if(_nextMessage < _log.size())
-//    {
-//        message= _log[_nextMessage];
-//        _nextMessage++;
-//    }
-
-//    //_indexLock.unlock();
-//    return message;
-//}

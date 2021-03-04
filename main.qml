@@ -25,10 +25,6 @@ Window {
             actionsRunner.getNextResult()
         }
 
-//        onLogUpdated: {
-//            logTextEdit.text += actionsRunner.getLastLogMessage() + "\n"
-//        }
-
         onProgressChanged:
         {
             progressBar.value = actionsRunner.getSearchProgress()
@@ -219,6 +215,11 @@ Window {
                                     font.bold: true
 
                                     onClicked: {
+                                        if(pauseSearchButton.text == "Resume")
+                                        {
+                                            pauseSearchButton.text = "Pause"
+                                            actionsRunner.pauseSearch()
+                                        }
                                         actionsRunner.stopSearch()
                                     }
                                 }
@@ -539,40 +540,13 @@ Window {
                                 clip: true
 
                                 TextArea {
-                                    Accessible.name: "document"
                                     id: logArea
                                     anchors.fill: parent
-                                    baseUrl: "qrc:/"
-                                    text: document.text
+                                    text: ""//actionsRunner.getLogger().text
                                     textFormat: Qt.PlainText
                                     selectByMouse: true
                                     readOnly : true
-//                                    Component.onCompleted: forceActiveFocus()
                                 }
-
-                                DocumentHandler {
-                                    id: document
-                                    target: logArea
-//                                    cursorPosition: logArea.cursorPosition
-//                                    selectionStart: logArea.selectionStart
-//                                    selectionEnd: logArea.selectionEnd
-                                    textColor: "black"
-
-                                    Component.onCompleted: document.fileUrl = "log.txt"
-
-//                                    onError: {
-//                                        errorDialog.text = message
-//                                        errorDialog.visible = true
-//                                    }
-                                }
-//                                TextEdit{
-//                                    id: logTextEdit
-//                                    anchors.fill: parent
-//                                    selectByMouse: true
-//                                    readOnly : true
-
-//                                    text: ""
-//                                }
                             }
                         }
                     }

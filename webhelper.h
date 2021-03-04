@@ -7,7 +7,7 @@ class WebHelper
 public:
     WebHelper();
     static QString DownloadHtml(QString address);
-    static QList<QString> GetAllLinksFromHtmlBody(QString &htmlbody);
+    static QString DownloadHtmlWebEngine(QString address);
 };
 
 #endif // WEBHELPER_H

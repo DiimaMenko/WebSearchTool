@@ -22,6 +22,7 @@ class WebPage
 
     int _errors;
 
+
 public:
     WebPage(QString searchPhrase, QString url);
 
@@ -29,11 +30,20 @@ public:
     void GetTextFromBodyAndSearch();
     void GetLinksFromBody();
     void GetTitleFromHtml();
+    int GetErrorCode();
 
     QString Url() const;
     QString Title() const;
     QList<QString> GetLinks() const;
     bool IsPhraseFound() const;
+
+    int pageSize;
+    int downloadingTime;
+    int searchingTitleTime;
+    int gettingBodyTime;
+    int gettingLinksTime;
+    int gettingTextFromBodyTime;
+    int overalTime;
 };
 
 #endif // WEBPAGE_H

@@ -6,6 +6,12 @@
 #include <QFile>
 #include <QTextStream>
 
+enum MessageType {
+    message = 0,
+    timing = 1,
+    link = 2,
+};
+
 class Logger : public QObject
 {
     Q_OBJECT
@@ -17,17 +23,16 @@ class Logger : public QObject
     QReadWriteLock _indexLock;
     int64_t _nextMessage;
 
-    QString Format(const QString &message);
+    QString Format(MessageType messageType, const QString &message);
 public:
-//    Q_PROPERTY(QByteArray textLog READ TextLog NOTIFY textLogChanged)
-//    QByteArray textLog;
-//    QByteArray TextLog(){
-//        return textLog;
-//    }
+    Q_PROPERTY(QString text READ getText NOTIFY textLogChanged)
+    QString text;
+    Q_INVOKABLE QString getText(){
+        return text;
+    }
 
     Logger();
-    void AddMessage(const QString &message);
-//    QString GetLastMessage();
+    void AddMessage(MessageType messageType, const QString &message);
 
     ~Logger(){
         if(_logFile->isOpen())
@@ -37,8 +42,8 @@ public:
         }
     }
 
-//signals:
-//    void textLogChanged(QString);
+signals:
+    void textLogChanged(QString);
 };
 
 #endif // LOGGER_H

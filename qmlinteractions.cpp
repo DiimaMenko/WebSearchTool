@@ -5,91 +5,126 @@
 
 Q_INVOKABLE void QmlInteractions::runSearch(QString searchWord, QString startingUrl, int maximumScanUrls, int threadsCount)
 {
-    AddToLog("Starting search");
+    AddToLog(message, "Search started.");
     _pausePressed = false;
     _stopPressed = false;
     _searchProgress = 0.0;
     _currentResultIterator = 0;
     _nextLink = 0;
     _finishedThreadsCount = 0;
+    threadsWaiting = 0;
 
     if(maximumScanUrls < threadsCount)
     {
-        AddToLog("Setup have maximum scan urls coun bigger than thread count. Reducing thread count to " + QString::number(threadsCount));
+        AddToLog(message, "Setup have maximum scan urls coun bigger than thread count. Reducing thread count to " + QString::number(threadsCount));
         threadsCount = maximumScanUrls;
     }
 
-    AddToLog("Clear previous results");
+    AddToLog(message, "Clear previous results");
     _searchResults.clear();
     _links.clear();
 
-    AddToLog("Maximum Url count = " + QString::number(maximumScanUrls));
-    AddToLog("Threads count = " + QString::number(threadsCount));
+    AddToLog(message, "Maximum Url count = " + QString::number(maximumScanUrls));
+    AddToLog(message, "Threads count = " + QString::number(threadsCount));
     _maximumScanUrlsCount = maximumScanUrls;
     _threadsCount = threadsCount;
 
-    AddToLog("Search phrase: " + searchWord);
-    AddToLog("Starting Url: " + startingUrl);
+    AddToLog(message, "Search phrase: " + searchWord);
+    AddToLog(message, "Starting Url: " + startingUrl);
     _searchWord = searchWord;
     templink link;
     link.url = startingUrl;
     link.used = false;
     _links.append(link);
 
-    AddToLog("Creating specified amount of threads.");
+    AddToLog(message, "Creating specified amount of threads.");
+    //TODO think how we can create threads only when enough links present
+    //     and break threads creation if all alive threads finished work and no unused links left.
     for(int i = 0; i < _threadsCount; i++)
     {
         SearchWorker *worker = new SearchWorker(this, searchWord);
         _threads.append(worker);
         connect(worker, &SearchWorker::ThreadFinishedWork, this, &QmlInteractions::ThreadFinishedWork);
+        connect(worker, &SearchWorker::finished, worker, &SearchWorker::deleteLater);
         _threads[i]->start();
     }
 }
 
 void QmlInteractions::ThreadFinishedWork(QString threadId)
 {
-    AddToLog("Thread " + threadId + " finished work.");
+    AddToLog(message, "Thread " + threadId + " finished work.");
     _lockFinishedThreadsCount.lockForWrite();
     _finishedThreadsCount++;
     _lockFinishedThreadsCount.unlock();
 
     if(_finishedThreadsCount == _threadsCount)
     {
+        AddToLog(message, "Search finished.");
+        _threads.clear();
+        _searchProgress = 1.0;
         emit searchFinished();
+    }
+    else
+    {
+        AddToLog(message, " " + QString::number(_finishedThreadsCount) + " threads already finished work.");
     }
 }
 
-void QmlInteractions::AddToLog(const QString &message)
+void QmlInteractions::AddToLog(MessageType messageType, const QString &message)
 {
-    _log.AddMessage(message);
-    //emit logUpdated();
+    _log.AddMessage(messageType, message);
+    emit logUpdated();
 }
 
 QString QmlInteractions::GetNextLink()
 {
     QString returnLink;
 
+    _waitingThreadsCountLock.lockForWrite();
+    threadsWaiting++;
+    _waitingThreadsCountLock.unlock();
+
+    int i = 0;
+
+    _lockNextLinkIterator.lockForWrite();
     while(_nextLink >= _links.size())
     {
-        if(_nextLink >= _maximumScanUrlsCount)
+        if(i++ > 999)
         {
-            AddToLog("Looks like no more links can be scanned current: "
-                     + QString::number(_nextLink)
-                     + " already present in list: "
-                     + QString::number(_links.size()));
+            AddToLog(message, "New links was not added too long time. Exiting this thread now.");
+            _lockNextLinkIterator.unlock();
             return "";
         }
-        AddToLog("Waiting for adding more links current: "
+
+        if(_nextLink >= _maximumScanUrlsCount)
+        {
+            AddToLog(message, "Looks like no more links can be scanned.");
+            _lockNextLinkIterator.unlock();
+            return "";
+        }
+
+        if(threadsWaiting >= _threadsCount - _finishedThreadsCount)
+        {
+            AddToLog(message, "Looks like all threads stucked with no links to search. Exiting now.");
+            _lockNextLinkIterator.unlock();
+            return "";
+        }
+
+        AddToLog(message, "Waiting for adding more links current: "
                  + QString::number(_nextLink)
                  + " already present in list: "
                  + QString::number(_links.size()));
+
         QThread::msleep(100);
     }
 
-    _lockNextLinkIterator.lockForWrite();
+    _waitingThreadsCountLock.lockForWrite();
+    threadsWaiting--;
+    _waitingThreadsCountLock.unlock();
 
     returnLink = _links[_nextLink].url;
     _links[_nextLink].used = true;
+
     _nextLink++;
 
     _searchProgress = double(_nextLink) / double(_maximumScanUrlsCount);
@@ -112,10 +147,10 @@ void QmlInteractions::AddResult(QString title, QString url)
 
 void QmlInteractions::AddLinks(const QList<QString> &linkList)
 {
-    AddToLog("Adding found links to storage");
+    AddToLog(message, "Adding " + QString::number(linkList.size()) + " found links to storage");
     if(_links.size() >= _maximumScanUrlsCount)
     {
-        AddToLog("Links count reached maximum, no more links will be added");
+        AddToLog(message, "Links count reached maximum, no more links will be added");
         return;
     }
 
@@ -183,8 +218,18 @@ bool QmlInteractions::StopPressed()
     return _stopPressed;
 }
 
-
 bool QmlInteractions::PausePressed()
 {
     return _pausePressed;
+}
+
+QmlInteractions::~QmlInteractions()
+{
+//    for(int i = _threads.size(); i >= 0; i--)
+//    {
+//        if(!_threads[i]->isFinished())
+//        {
+//            _threads[i]->terminate();
+//        }
+//    }
 }
