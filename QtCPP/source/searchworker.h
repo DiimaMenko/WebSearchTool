@@ -21,6 +21,7 @@ public:
     explicit SearchWorker(QmlInteractions *i_dataPointer, QString searchWord);
     void RunAlternative();
     void FinalizeWork();
+    ~SearchWorker();
 
 signals:
     void ThreadFinishedWork(QString str);

@@ -13,7 +13,7 @@ void SearchWorker::run()
     do
     {
         QString link = dataPointer->GetNextLink();
-        if(link.isEmpty())
+        if(link.size() < 5)
         {
            FinalizeWork();
            return;
@@ -50,6 +50,7 @@ void SearchWorker::run()
         {
             dataPointer->AddToLog(message, "-Phrase is not found on \"" + page.Title() + "\" (" + page.Url() + ")");
         }
+        dataPointer->UpdateProgress();
     }
     while(!dataPointer->StopPressed());
     FinalizeWork();
@@ -63,4 +64,9 @@ void SearchWorker::FinalizeWork()
     emit ThreadFinishedWork(QString::fromStdString(stream.str()));
 
     exit(0);
+}
+
+SearchWorker::~SearchWorker()
+{
+    dataPointer->AddToLog(message, "Called destructor");
 }

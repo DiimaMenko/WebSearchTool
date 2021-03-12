@@ -27,20 +27,11 @@ class Logger : public QObject
 public:
     Q_PROPERTY(QString text READ getText NOTIFY textLogChanged)
     QString text;
-    Q_INVOKABLE QString getText(){
-        return text;
-    }
+    Q_INVOKABLE QString getText();
 
     Logger();
+    ~Logger();
     void AddMessage(MessageType messageType, const QString &message);
-
-    ~Logger(){
-        if(_logFile->isOpen())
-        {
-            _logFile->flush();
-            _logFile->close();
-        }
-    }
 
 signals:
     void textLogChanged(QString);

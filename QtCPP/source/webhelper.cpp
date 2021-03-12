@@ -2,7 +2,12 @@
 
 WebHelper::WebHelper()
 {
+    qDebug() << "WebHelper creation";
+}
 
+WebHelper::~WebHelper()
+{
+    qDebug() << "WebHelper deletion";
 }
 
 QString WebHelper::DownloadHtml(QString address)
@@ -38,9 +43,4 @@ QString WebHelper::DownloadHtml(QString address)
             return "";
         }
     }
-}
-
-QString WebHelper::DownloadHtmlWebEngine(QString address)
-{
-
 }

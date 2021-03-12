@@ -341,8 +341,8 @@ Window {
                                     Layout.fillHeight: true
 
                                     from: 1
-                                    to: 2048
-                                    value: 4
+                                    to: 128
+                                    value: 16
                                     stepSize: 1
 
                                     handle: null
@@ -360,7 +360,7 @@ Window {
 
                                     validator: IntValidator{
                                         bottom:1
-                                        top:2048
+                                        top:128
                                     }
 
                                     onTextChanged: threadsCountSlider.value = Number(text)
@@ -542,7 +542,7 @@ Window {
                                 TextArea {
                                     id: logArea
                                     anchors.fill: parent
-                                    text: ""//actionsRunner.getLogger().text
+                                    text: actionsRunner.getLogger().text
                                     textFormat: Qt.PlainText
                                     selectByMouse: true
                                     readOnly : true

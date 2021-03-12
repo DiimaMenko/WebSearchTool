@@ -3,12 +3,18 @@
 #include "searchresult.h"
 #include <QtConcurrent/QtConcurrent>
 
+QmlInteractions::QmlInteractions (QObject* parent) : QObject(parent)
+{
+    qDebug() << "QmlInteractions created";
+}
+
 Q_INVOKABLE void QmlInteractions::runSearch(QString searchWord, QString startingUrl, int maximumScanUrls, int threadsCount)
 {
     AddToLog(message, "Search started.");
     _pausePressed = false;
     _stopPressed = false;
     _searchProgress = 0.0;
+    _linksProcessed = 0;
     _currentResultIterator = 0;
     _nextLink = 0;
     _finishedThreadsCount = 0;
@@ -62,6 +68,7 @@ void QmlInteractions::ThreadFinishedWork(QString threadId)
         AddToLog(message, "Search finished.");
         _threads.clear();
         _searchProgress = 1.0;
+        qDebug() << QString::number(_finishedThreadsCount) + " threads already finished work.";
         emit searchFinished();
     }
     else
@@ -72,8 +79,18 @@ void QmlInteractions::ThreadFinishedWork(QString threadId)
 
 void QmlInteractions::AddToLog(MessageType messageType, const QString &message)
 {
+    _logLock.lockForWrite();
     _log.AddMessage(messageType, message);
-    emit logUpdated();
+    _logLock.unlock();
+}
+
+void QmlInteractions::UpdateProgress()
+{
+    _lockProgress.lockForWrite();
+    _linksProcessed++;
+    _searchProgress = (double)_linksProcessed / (double)_maximumScanUrlsCount;
+    emit progressChanged();
+    _lockProgress.unlock();
 }
 
 QString QmlInteractions::GetNextLink()
@@ -84,14 +101,17 @@ QString QmlInteractions::GetNextLink()
     threadsWaiting++;
     _waitingThreadsCountLock.unlock();
 
-    int i = 0;
+    int times = 0;
 
     _lockNextLinkIterator.lockForWrite();
     while(_nextLink >= _links.size())
     {
-        if(i++ > 999)
+        if(times++ > 999)
         {
             AddToLog(message, "New links was not added too long time. Exiting this thread now.");
+            _waitingThreadsCountLock.lockForWrite();
+            threadsWaiting--;
+            _waitingThreadsCountLock.unlock();
             _lockNextLinkIterator.unlock();
             return "";
         }
@@ -99,6 +119,9 @@ QString QmlInteractions::GetNextLink()
         if(_nextLink >= _maximumScanUrlsCount)
         {
             AddToLog(message, "Looks like no more links can be scanned.");
+            _waitingThreadsCountLock.lockForWrite();
+            threadsWaiting--;
+            _waitingThreadsCountLock.unlock();
             _lockNextLinkIterator.unlock();
             return "";
         }
@@ -106,6 +129,9 @@ QString QmlInteractions::GetNextLink()
         if(threadsWaiting >= _threadsCount - _finishedThreadsCount)
         {
             AddToLog(message, "Looks like all threads stucked with no links to search. Exiting now.");
+            _waitingThreadsCountLock.lockForWrite();
+            threadsWaiting--;
+            _waitingThreadsCountLock.unlock();
             _lockNextLinkIterator.unlock();
             return "";
         }
@@ -127,11 +153,7 @@ QString QmlInteractions::GetNextLink()
 
     _nextLink++;
 
-    _searchProgress = double(_nextLink) / double(_maximumScanUrlsCount);
-
     _lockNextLinkIterator.unlock();
-
-    emit progressChanged();
 
     return returnLink;
 }
@@ -225,11 +247,5 @@ bool QmlInteractions::PausePressed()
 
 QmlInteractions::~QmlInteractions()
 {
-//    for(int i = _threads.size(); i >= 0; i--)
-//    {
-//        if(!_threads[i]->isFinished())
-//        {
-//            _threads[i]->terminate();
-//        }
-//    }
+    qDebug() << "QmlInteractions deletion";
 }

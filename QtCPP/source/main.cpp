@@ -3,7 +3,6 @@
 #include "qmlinteractions.h"
 #include "logger.h"
 #include <QIcon>
-#include <QtWebEngineCore>
 
 int main(int argc, char *argv[])
 {

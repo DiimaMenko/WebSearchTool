@@ -6,8 +6,8 @@ class WebHelper
 {
 public:
     WebHelper();
+    ~WebHelper();
     static QString DownloadHtml(QString address);
-    static QString DownloadHtmlWebEngine(QString address);
 };
 
 #endif // WEBHELPER_H

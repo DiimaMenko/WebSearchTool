@@ -30,6 +30,7 @@ WebPage::WebPage(QString searchPhrase, QString url)
     startTime = QTime::currentTime();
     GetBodyFromHtml();
     gettingBodyTime = startTime.msecsTo(QTime::currentTime());
+    delete _fullHtml;
 
     startTime = QTime::currentTime();
     GetLinksFromBody();
@@ -40,7 +41,7 @@ WebPage::WebPage(QString searchPhrase, QString url)
     gettingTextFromBodyTime = startTime.msecsTo(QTime::currentTime());
     overalTime = overalStartTime.msecsTo(QTime::currentTime());
 
-    if(overalTime - downloadingTime > 1000)
+    /*if(overalTime - downloadingTime > 1000)
     {
         auto htmlFile = new QFile(Title().remove(QRegExp("[^a-zA-Z\\d\\s]")) + ".html");
         if(!htmlFile->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append))
@@ -52,7 +53,7 @@ WebPage::WebPage(QString searchPhrase, QString url)
         *htmlFileStream << *_fullHtml;
         htmlFile->flush();
         htmlFile->close();
-    }
+    }*/
 }
 
 void WebPage::GetTitleFromHtml()
@@ -126,35 +127,43 @@ void WebPage::GetTextFromBodyAndSearch()
     {
         return;
     }
+
     QString bodyText = "";
     int64_t startIndex = 0;
     int64_t length = 1;
     int64_t endIndex = 1;
 
-    while(startIndex <= _body.length())
+    if(_body.length() > 10000)  // If page is too big, just fast search through all body
     {
-        if(startIndex == _body.indexOf("<script", startIndex - 1))
-        {
-            startIndex = _body.indexOf("</script>", startIndex);
-        }
-        else if(startIndex == _body.indexOf("<style", startIndex - 1))
-        {
-            startIndex = _body.indexOf("</style>", startIndex);
-        }
-
-        endIndex = _body.indexOf("<", startIndex + 1);
-        if(endIndex < 0)
-            break;
-
-        length = endIndex - startIndex;
-        bodyText.append(_body.data() + startIndex, length);
-        startIndex = _body.indexOf(">", endIndex + 1);
-
-        if(startIndex < endIndex)
-            break;
+        _searchPhraseFound = _body.indexOf(_searchPhrase, 0, Qt::CaseInsensitive) > -1;
     }
+    else    // Else, search through only visible text
+    {
+        while(startIndex <= _body.length())
+        {
+            if(startIndex == _body.indexOf("<script", startIndex - 1))
+            {
+                startIndex = _body.indexOf("</script>", startIndex);
+            }
+            else if(startIndex == _body.indexOf("<style", startIndex - 1))
+            {
+                startIndex = _body.indexOf("</style>", startIndex);
+            }
 
-    _searchPhraseFound =  bodyText.indexOf(_searchPhrase, 0, Qt::CaseInsensitive) > -1;
+            endIndex = _body.indexOf("<", startIndex + 1);
+            if(endIndex < 0)
+                break;
+
+            length = endIndex - startIndex;
+            bodyText.append(_body.data() + startIndex, length);
+            startIndex = _body.indexOf(">", endIndex + 1);
+
+            if(startIndex < endIndex)
+                break;
+        }
+
+        _searchPhraseFound =  bodyText.indexOf(_searchPhrase, 0, Qt::CaseInsensitive) > -1;
+    }
 }
 
 void WebPage::GetLinksFromBody()

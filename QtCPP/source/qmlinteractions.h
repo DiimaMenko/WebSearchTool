@@ -30,9 +30,10 @@ class QmlInteractions: public QObject
 
     QList<SearchResult> _searchResults;
     QList<templink> _links;
-    int64_t _maximumScanUrlsCount;
-    int64_t _threadsCount;
-    int64_t _currentResultIterator;
+    int _maximumScanUrlsCount;
+    int _threadsCount;
+    int _currentResultIterator;
+    int _linksProcessed;
     QString _searchWord;
     double _searchProgress;
     bool _stopPressed;
@@ -40,6 +41,8 @@ class QmlInteractions: public QObject
 
     Logger _log;
 
+    QReadWriteLock _logLock;
+    QReadWriteLock _lockProgress;
     QReadWriteLock _lockLinks;
     QReadWriteLock _lockResults;
     QReadWriteLock _lockNextLinkIterator;
@@ -51,7 +54,7 @@ class QmlInteractions: public QObject
     int threadsWaiting;
 
 public:
-    explicit QmlInteractions (QObject* parent = 0) : QObject(parent) {}
+    explicit QmlInteractions (QObject* parent = 0);
     ~QmlInteractions();
     Q_INVOKABLE QString getLastSearchResultTitle();
     Q_INVOKABLE QString getLastSearchResultLink() const;
@@ -66,7 +69,7 @@ public:
     void RunLoop();
     void AddResult(QString title, QString url);
     void AddLinks(const QList<QString> &linkList);
-    void NotifyProgressChanged();
+    void UpdateProgress();
 
     QString GetNextLink();
     void AddToLog(MessageType messageType, const QString &message);
@@ -80,7 +83,6 @@ signals:
     void searchResultsChanged();
     void searchFinished();
     void progressChanged();
-    void logUpdated();
 };
 
 #endif // QMLINTERACTIONS_H

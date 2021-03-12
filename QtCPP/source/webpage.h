@@ -22,7 +22,6 @@ class WebPage
 
     int _errors;
 
-
 public:
     WebPage(QString searchPhrase, QString url);
 
